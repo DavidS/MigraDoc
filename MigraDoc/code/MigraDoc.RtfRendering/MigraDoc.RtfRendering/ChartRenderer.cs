@@ -177,17 +177,9 @@ namespace MigraDoc.RtfRendering
         int horzPixels = (int)(GetShapeWidth().Inch * resolution);
         int vertPixels = (int)(GetShapeHeight().Inch * resolution);
         Bitmap bmp = new Bitmap(horzPixels, vertPixels);
-#if true
-        XGraphics gfx = XGraphics.CreateMeasureContext(new XSize(horzPixels, vertPixels), XGraphicsUnit.Point, XPageDirection.Downwards);
-#else
-#if GDI
+        // Always renders to a Bitmap for embedding in output.
         XGraphics gfx = XGraphics.FromGraphics(Graphics.FromImage(bmp), new XSize(horzPixels, vertPixels));
-#endif
-#if WPF
-        // TODOWPF
-        XGraphics gfx = null; //XGraphics.FromGraphics(Graphics.FromImage(bmp), new XSize(horzPixels, vertPixels));
-#endif
-#endif
+
         //REM: Should not be necessary:
         gfx.ScaleTransform(resolution / 72);
         //gfx.PageUnit = XGraphicsUnit.Point;
