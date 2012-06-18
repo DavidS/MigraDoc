@@ -340,12 +340,6 @@ namespace MigraDoc.DocumentObjectModel
     /// </summary>
     internal override void Serialize(Serializer serializer)
     {
-#if DEBUG // Test
-      // THHO4THHO debug code only...
-      if (Name == StyleNames.Heading1 || Name == StyleNames.Heading2)
-        Name.GetType();
-#endif
-
       // For build-in styles all properties that differ from their default values
       // are serialized.
       // For user-defined styles all non-null properties are serialized.
@@ -383,7 +377,6 @@ namespace MigraDoc.DocumentObjectModel
             // case: build-in style with unmodified base style name
             string name = DdlEncoder.QuoteIfNameContainsBlanks(this.Name);
             serializer.WriteLineNoCommit(name);
-            //!!!newTHHO 26.07.2007 begin
             // It's fine if we have the predefined base style, but ...
             // ... the base style may have been modified or may even have a modified base style.
             // Methinks it's wrong to compare with the built-in style, so let's compare with the
@@ -395,7 +388,6 @@ namespace MigraDoc.DocumentObjectModel
             // detect this if we compare with the built-in style that has no underline.
             // Known problem: Default values like "OutlineLevel = Level1" will now be serialized
             // TODO: optimize...
-            //!!!newTHHO 26.07.2007 begin
           }
           else
           {
@@ -421,6 +413,7 @@ namespace MigraDoc.DocumentObjectModel
         Style refStyle0 = Document.Styles[Document.Styles.GetIndex(this.baseStyle.Value)];
         refStyle = Document.Styles[this.baseStyle.Value];
         refFormat = refStyle != null ? refStyle.ParagraphFormat : null;
+        refFont = refStyle.Font;
 #else
         refFormat = null;
 #endif

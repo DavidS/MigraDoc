@@ -35,7 +35,8 @@ namespace XDrawing.TestLab.FormPages
       this.colorPage.UpdateDrawing += new UpdateDrawing(OnUpdateDrawing);
 
       FontFamily[] family1 = FontFamily.Families;
-      FontFamily[] family2 = FontFamily.GetFamilies(Graphics.FromHwnd(IntPtr.Zero));
+      //FontFamily[] family2 = FontFamily.GetFamilies(Graphics.FromHwnd(IntPtr.Zero));
+      FontFamily[] family2 = FontFamily.Families;
 
       FontFamily[] families = FontFamily.Families;
       foreach (FontFamily family in families)

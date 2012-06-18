@@ -31,25 +31,18 @@ http://sourceforge.net/projects/pdfsharp
 
 Available Packages
 ------------------
-PDFSharp-MigraDocFoundation-1_31.zip: the complete source code (recommended if you're using Visual Studio 2008 or 2005) 
-PDFsharp-MigraDocFoundation-Assemblies-1_31.zip: the compiled assemblies (for those who don't use Visual Studio 2008 or 2005) 
-PDFsharp-Help-VSIPCC-1_31.zip: help files that integrate with the Visual Studio documentation (recommended if you're using Visual Studio 2008 or 2005) 
-PDFsharp-Help-Standalone-1_31.zip: stand-alone help file (for those who don't use Visual Studio 2008 or 2005)
+PDFSharp-MigraDocFoundation-1_32.zip: the complete source code (recommended if you're using Visual Studio 2010) 
+PDFsharp-MigraDocFoundation-Assemblies-1_32.zip: the compiled assemblies (for those who don't use Visual Studio 2010) 
 
 Visit CodePlex for further information:
 http://pdfsharp.codeplex.com/Release/ProjectReleases.aspx
 
 
-Help Files for Visual Studio
-----------------------------
-Help files for PDFsharp and MigraDoc can be downloaded separately.
-
-We offer two versions:
- * a .CHM file for stand-alone use with the Windows Help Viewer
- * a Setup that integrates with the Visual Studio documentation (VS 2008 or VS 2005)
-
-See http://www.pdfsharp.net/wiki/Help.ashx for further information.
-
+What's New in PDFsharp & MigraDoc Foundation 1.32
+-------------------------------------------------
+Version 1.32 contains some minor bug fixes.
+Version 1.32 includes solutions for Visual Studio 2010.
+If you need solutions for VS 2005 or VS 2008, download version 1.31.
 
 What's New in PDFsharp & MigraDoc Foundation 1.31
 -------------------------------------------------

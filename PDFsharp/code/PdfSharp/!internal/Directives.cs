@@ -28,8 +28,8 @@
 #endregion
 
 //
-// Documentatation of conditional compilation symbol used in PDFsharp 1.1.
-// Checks correct setting and obsolete conditional compilation symbols.
+// Documentation of conditional compilation symbols used in PDFsharp 1.1.
+// Checks correct settings and obsolete conditional compilation symbols.
 //
 
 #if MIGRADOC

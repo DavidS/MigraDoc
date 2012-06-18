@@ -392,39 +392,36 @@ namespace MigraDoc.DocumentObjectModel
         int pos = serializer.BeginContent("Font");
 
 #if true
-        //!!!newTHHO 26.07.2007 begin
         // Don't write null values if font is null.
         // Do write null values if font is not null!
-        if ((!this.name.IsNull && this.Name != String.Empty && font == null) ||
-            (font != null && !this.name.IsNull && this.Name != String.Empty && this.Name != font.Name))
-          serializer.WriteSimpleAttribute("Name", this.Name);
+        if ((!name.IsNull && Name != String.Empty && font == null) ||
+            (font != null && !name.IsNull && Name != String.Empty && Name != font.Name))
+          serializer.WriteSimpleAttribute("Name", Name);
 
         // Test
-        if (!this.size.IsNull && this.Size != 0 && this.Size.Point == 0)
-          this.GetType();
-
-        if (!this.size.IsNull && 
-            (font == null || (font != null && this.Size != font.Size)))
-          serializer.WriteSimpleAttribute("Size", this.Size);
+        if (!size.IsNull && Size != 0 && Size.Point == 0)
+          GetType();
+        if (!size.IsNull && 
+            (font == null || Size != font.Size))
+          serializer.WriteSimpleAttribute("Size", Size);
         //NBool and NEnum have to be compared directly to check whether the value Null is
-        if (!this.bold.IsNull && font == null || (font != null && this.Bold != font.Bold))
-          serializer.WriteSimpleAttribute("Bold", this.Bold);
+        if (!bold.IsNull && (font == null || Bold != font.Bold || font.bold.IsNull))
+          serializer.WriteSimpleAttribute("Bold", Bold);
 
-        if (!this.italic.IsNull && font == null || (font != null && this.Italic != font.Italic))
-          serializer.WriteSimpleAttribute("Italic", this.Italic);
+        if (!italic.IsNull && (font == null || Italic != font.Italic || font.italic.IsNull))
+          serializer.WriteSimpleAttribute("Italic", Italic);
 
-        if (!this.underline.IsNull && font == null || (font != null && this.Underline != font.Underline))
-          serializer.WriteSimpleAttribute("Underline", this.Underline);
+        if (!underline.IsNull && (font == null || Underline != font.Underline || font.underline.IsNull))
+          serializer.WriteSimpleAttribute("Underline", Underline);
 
-        if (!this.superscript.IsNull && font == null || (font != null && this.Superscript != font.Superscript))
-          serializer.WriteSimpleAttribute("Superscript", this.Superscript);
+        if (!superscript.IsNull && (font == null || Superscript != font.Superscript || font.superscript.IsNull))
+          serializer.WriteSimpleAttribute("Superscript", Superscript);
 
-        if (!this.subscript.IsNull && font == null || (font != null && this.Subscript != font.Subscript))
-          serializer.WriteSimpleAttribute("Subscript", this.Subscript);
+        if (!subscript.IsNull && (font == null || Subscript != font.Subscript || font.subscript.IsNull))
+          serializer.WriteSimpleAttribute("Subscript", Subscript);
 
-        if (!this.color.IsNull && (font == null || (font != null && this.Color.Argb != font.Color.Argb)))// && this.Color.RGB != Color.Transparent.RGB)
+        if (!color.IsNull && (font == null || this.Color.Argb != font.Color.Argb))// && this.Color.RGB != Color.Transparent.RGB)
           serializer.WriteSimpleAttribute("Color", this.Color);
-        //!!!newTHHO 26.07.2007 begin
 #else
         if ((!this.name.IsNull && this.Name != String.Empty) && (font == null || this.Name != font.Name))
           serializer.WriteSimpleAttribute("Name", this.Name);

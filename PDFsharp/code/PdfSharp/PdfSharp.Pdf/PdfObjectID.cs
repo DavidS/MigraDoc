@@ -30,6 +30,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections;
+using System.Globalization;
 using System.Text;
 using System.IO;
 using PdfSharp.Internal;
@@ -143,7 +144,7 @@ namespace PdfSharp.Pdf
     /// </summary>
     public override string ToString()
     {
-      return this.objectNumber.ToString() + " " + this.generationNumber.ToString();
+      return objectNumber.ToString(CultureInfo.InvariantCulture) + " " + generationNumber.ToString(CultureInfo.InvariantCulture);
     }
 
     /// <summary>

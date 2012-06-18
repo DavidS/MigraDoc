@@ -30,6 +30,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.IO;
 using MigraDoc.DocumentObjectModel.Tables;
@@ -73,7 +74,7 @@ namespace MigraDoc.RtfRendering
       //Caution: Write width AFTER style to satisfy word.
       Translate("Style", "brdr", RtfUnit.Undefined, "s", false);
       Translate("Width", "brdrw", RtfUnit.Twips, "10", false);
-      Translate("Color", "brdrcf", RtfUnit.Undefined, this.docRenderer.GetColorIndex(GetDefaultColor()).ToString(), false);
+      Translate("Color", "brdrcf", RtfUnit.Undefined, this.docRenderer.GetColorIndex(GetDefaultColor()).ToString(CultureInfo.InvariantCulture), false);
     }
 
     /// <summary>

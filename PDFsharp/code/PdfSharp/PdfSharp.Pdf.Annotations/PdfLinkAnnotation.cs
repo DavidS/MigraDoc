@@ -185,7 +185,7 @@ namespace PdfSharp.Pdf.Annotations
 
       /// <summary>
       /// (Optional; PDF 1.3) A URI action formerly associated with this annotation. When Web 
-      /// Capture changes an annotation from a URI to a go-to action, it uses this entry to save 
+      /// Capture changes and annotation from a URI to a go-to action, it uses this entry to save 
       /// the data from the original URI action so that it can be changed back in case the target page for 
       /// the go-to action is subsequently deleted.
       /// </summary>

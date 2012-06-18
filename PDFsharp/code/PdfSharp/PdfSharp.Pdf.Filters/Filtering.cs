@@ -111,7 +111,7 @@ namespace PdfSharp.Pdf.Filters
         case "DCTDecode":
         case "JPXDecode":
         case "Crypt":
-          Debug.WriteLine("Filter not implemented: " + filterName.ToString());
+          Debug.WriteLine("Filter not implemented: " + filterName);
           return null;
       }
       throw new NotImplementedException("Unknown filter: " + filterName);

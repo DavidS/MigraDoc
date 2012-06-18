@@ -404,7 +404,7 @@ namespace PdfSharp.Pdf.IO
           // Remove all unreachable objects
           int removed = document.irefTable.Compact();
           if (removed != 0)
-            Debug.WriteLine("Number of deleted unreachable objects: " + removed.ToString());
+            Debug.WriteLine("Number of deleted unreachable objects: " + removed);
 
           // Force flattening of page tree
           PdfPages pages = document.Pages;

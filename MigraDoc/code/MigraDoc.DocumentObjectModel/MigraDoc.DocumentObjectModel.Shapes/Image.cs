@@ -201,21 +201,30 @@ namespace MigraDoc.DocumentObjectModel.Shapes
     {
       string filePath = "";
 
-      if (!String.IsNullOrEmpty(workingDir))
-        filePath = workingDir;
-      else
-        filePath = Directory.GetCurrentDirectory() + "\\";
-
-      if (!Document.IsNull("ImagePath"))
+      try
       {
-        string foundfile = ImageHelper.GetImageName(filePath, this.Name, Document.ImagePath);
-        if (foundfile != null)
-          filePath = foundfile;
+        if (!String.IsNullOrEmpty(workingDir))
+          filePath = workingDir;
+        else
+          filePath = Directory.GetCurrentDirectory() + "\\";
+
+        if (!Document.IsNull("ImagePath"))
+        {
+          string foundfile = ImageHelper.GetImageName(filePath, this.Name, Document.ImagePath);
+          if (foundfile != null)
+            filePath = foundfile;
+          else
+            filePath = Path.Combine(filePath, Name);
+        }
         else
           filePath = Path.Combine(filePath, Name);
       }
-      else
-        filePath = Path.Combine(filePath, Name);
+      catch (Exception ex)
+      {
+        Debug.Assert(false, "Should never occur with properly formatted Wiki texts. " + ex);
+        return null;
+        //throw;
+      }
 
       return filePath;
     }

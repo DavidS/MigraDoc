@@ -185,7 +185,7 @@ namespace MigraDoc.Rendering
             this.areaProvider.PositionHorizontally(renderer.RenderInfo.LayoutInfo);
             this.areaProvider.PositionVertically(renderer.RenderInfo.LayoutInfo);
             //Added End
-            ready = idx == this.elements.Count - 1; //!!!newTHHO 19.01.2007
+            ready = idx == this.elements.Count - 1;
 
             ++idx;
           }

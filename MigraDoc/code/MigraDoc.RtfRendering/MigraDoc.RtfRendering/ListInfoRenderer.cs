@@ -30,6 +30,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using MigraDoc.DocumentObjectModel;
 using System.Collections.Generic;
 
@@ -70,7 +71,7 @@ namespace MigraDoc.RtfRendering
       rtfWriter.WriteControl("listsimple", 1);
       WriteListLevel();
       rtfWriter.WriteControl("listrestarthdn", 0);
-      rtfWriter.WriteControl("listid", listID.ToString());
+      rtfWriter.WriteControl("listid", listID.ToString(CultureInfo.InvariantCulture));
       this.rtfWriter.EndContent();
 
       prevListInfoID = new KeyValuePair<ListInfo, int>(listInfo, listID);

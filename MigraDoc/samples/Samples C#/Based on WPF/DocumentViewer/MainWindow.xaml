@@ -96,7 +96,7 @@
       <MenuItem Header="_File">
         <MenuItem Header="Create Sample 1" Click="Sample1_Click"/>
         <MenuItem Header="Create Sample 2"  Click="Sample2_Click"/>
-        <MenuItem Header="Open DDL File" />
+        <MenuItem Header="Open DDL File" Click="OpenDDL_Click"/>
         <Separator/>
         <MenuItem Header="Printer Setup" IsEnabled="False" />
         <MenuItem Header="Preview" IsEnabled="False" />

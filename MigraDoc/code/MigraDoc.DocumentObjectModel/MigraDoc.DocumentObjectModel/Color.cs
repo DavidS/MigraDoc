@@ -457,9 +457,9 @@ namespace MigraDoc.DocumentObjectModel
         {
           if ((this.argb & 0xFF000000) == 0xFF000000)
             return "RGB(" +
-              ((this.argb & 0xFF0000) >> 16).ToString() + "," +
-              ((this.argb & 0x00FF00) >> 8).ToString() + "," +
-              (this.argb & 0x0000FF).ToString() + ")";
+              ((this.argb & 0xFF0000) >> 16).ToString(CultureInfo.InvariantCulture) + "," +
+              ((this.argb & 0x00FF00) >> 8).ToString(CultureInfo.InvariantCulture) + "," +
+              (this.argb & 0x0000FF).ToString(CultureInfo.InvariantCulture) + ")";
           else
             return "0x" + argb.ToString("X");
         }

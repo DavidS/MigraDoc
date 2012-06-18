@@ -62,7 +62,7 @@ namespace MigraDoc.Rendering
     {
       this.imageFilePath = image.GetFilePath(this.documentRenderer.WorkingDirectory);
       //if (!File.Exists(this.imageFilePath))
-      if (!XImage.ExistsFile(this.imageFilePath)) //!!!newTHHO 21.06.2007
+      if (!XImage.ExistsFile(this.imageFilePath))
       {
         this.failure = ImageFailure.FileNotFound;
         Trace.WriteLine(Messages.ImageNotFound(this.image.Name), "warning");

@@ -69,7 +69,7 @@ namespace PdfSharp.Pdf
       // set the value of the reference to this.
       if (obj.iref != null)
         obj.iref.Value = this;
-#if DEBUG
+#if DEBUG_
       else
       {
         // If this occurs it is an internal error

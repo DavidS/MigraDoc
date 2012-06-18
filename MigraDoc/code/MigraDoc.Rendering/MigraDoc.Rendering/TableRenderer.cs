@@ -221,7 +221,7 @@ namespace MigraDoc.Rendering
     {
       InitRendering();
       RenderHeaderRows();
-      if (startRow < this.table.Rows.Count) //!!!newTHHO 09.08.2006
+      if (startRow < this.table.Rows.Count)
       {
         Cell cell = this.table[startRow, 0];
 
@@ -310,7 +310,7 @@ namespace MigraDoc.Rendering
       XUnit probeHeight = topHeight;
       XUnit offset = 0;
       if (this.startRow > this.lastHeaderRow + 1 &&
-        this.startRow < this.table.Rows.Count) //!!!newTHHO 09.08.2006
+        this.startRow < this.table.Rows.Count)
         offset = (XUnit)this.bottomBorderMap[this.startRow] - topHeight;
       else
         offset = -CalcMaxTopBorderWidth(0);
@@ -354,8 +354,7 @@ namespace MigraDoc.Rendering
       {
         TableFormatInfo formatInfo = (TableFormatInfo)this.renderInfo.FormatInfo;
         formatInfo.startRow = this.startRow;
-        //formatInfo.isEnding = currRow == this.table.Rows.Count - 1; //!!!delTHHO 09.08.2006 schöne Endlosschleife
-        formatInfo.isEnding = currRow >= this.table.Rows.Count - 1; //!!!newTHHO 09.08.2006
+        formatInfo.isEnding = currRow >= this.table.Rows.Count - 1;
         formatInfo.endRow = this.currRow;
       }
       FinishLayoutInfo(area, currentHeight, startingHeight);
@@ -384,9 +383,16 @@ namespace MigraDoc.Rendering
 
       else if (this.table.Rows.Alignment == RowAlignment.Left)
       {
-        XUnit leftOffset = LeftBorderOffset;
-        leftOffset += this.table.Columns[0].LeftPadding;
-        layoutInfo.Left = -leftOffset;
+        if (table.Columns.Count > 0) // Errors in Wiki syntax can lead to tables w/o columns ...
+        {
+          XUnit leftOffset = LeftBorderOffset;
+          leftOffset += table.Columns[0].LeftPadding;
+          layoutInfo.Left = -leftOffset;
+        }
+#if DEBUG
+        else
+          table.GetType();
+#endif
       }
 
       switch (this.table.Rows.Alignment)
@@ -411,7 +417,6 @@ namespace MigraDoc.Rendering
       {
         if (this.leftBorderOffset < 0)
         {
-          //!!!newTHHO 09.08.2006 begin
           if (table.Rows.Count > 0 && table.Columns.Count > 0)
           {
             Borders borders = this.mergedCells.GetEffectiveBorders(table[0, 0]);
@@ -420,7 +425,6 @@ namespace MigraDoc.Rendering
           }
           else
             this.leftBorderOffset = 0;
-          //!!!newTHHO 09.08.2006 end
         }
         return this.leftBorderOffset;
       }
@@ -441,7 +445,7 @@ namespace MigraDoc.Rendering
       }
       else
       {
-        if (this.table.Rows.Count > this.startRow) //!!!newTHHO 09.08.2006
+        if (this.table.Rows.Count > this.startRow)
           height = CalcMaxTopBorderWidth(this.startRow);
       }
 
@@ -527,7 +531,6 @@ namespace MigraDoc.Rendering
     /// <param name="row">The row index.</param>
     XUnit CalcMaxTopBorderWidth(int row)
     {
-      //!!!modTHHO 09.08.2006 begin
       XUnit maxWidth = 0;
       if (this.table.Rows.Count > row)
       {
@@ -551,7 +554,6 @@ namespace MigraDoc.Rendering
         }
       }
       return maxWidth;
-      //!!!modTHHO 09.08.2006 end
     }
 
     /// <summary>

@@ -117,7 +117,7 @@ namespace PdfSharp.Pdf.IO
     public void Write(int value)
     {
       WriteSeparator(CharCat.Character);
-      WriteRaw(value.ToString());
+      WriteRaw(value.ToString(CultureInfo.InvariantCulture));
       this.lastCat = CharCat.Character;
     }
 
@@ -127,7 +127,7 @@ namespace PdfSharp.Pdf.IO
     public void Write(uint value)
     {
       WriteSeparator(CharCat.Character);
-      WriteRaw(value.ToString());
+      WriteRaw(value.ToString(CultureInfo.InvariantCulture));
       this.lastCat = CharCat.Character;
     }
 
@@ -138,7 +138,7 @@ namespace PdfSharp.Pdf.IO
     {
       WriteSeparator(CharCat.Character);
       this.lastCat = CharCat.Character;
-      WriteRaw(value.Value.ToString());
+      WriteRaw(value.Value.ToString(CultureInfo.InvariantCulture));
     }
 
     /// <summary>
@@ -148,7 +148,7 @@ namespace PdfSharp.Pdf.IO
     {
       WriteSeparator(CharCat.Character);
       this.lastCat = CharCat.Character;
-      WriteRaw(value.Value.ToString());
+      WriteRaw(value.Value.ToString(CultureInfo.InvariantCulture));
     }
 
     /// <summary>
@@ -480,7 +480,7 @@ namespace PdfSharp.Pdf.IO
     {
       StringBuilder header = new StringBuilder("%PDF-");
       int version = document.version;
-      header.Append((version / 10).ToString() + "." + (version % 10).ToString() + "\n%\xD3\xF4\xCC\xE1\n");
+      header.Append((version / 10).ToString(CultureInfo.InvariantCulture) + "." + (version % 10).ToString(CultureInfo.InvariantCulture) + "\n%\xD3\xF4\xCC\xE1\n");
       WriteRaw(header.ToString());
 
       if (this.layout == PdfWriterLayout.Verbose)
@@ -500,7 +500,7 @@ namespace PdfSharp.Pdf.IO
     public void WriteEof(PdfDocument document, int startxref)
     {
       WriteRaw("startxref\n");
-      WriteRaw(startxref.ToString());
+      WriteRaw(startxref.ToString(CultureInfo.InvariantCulture));
       WriteRaw("\n%%EOF\n");
       int fileSize = (int)this.stream.Position;
       if (this.layout == PdfWriterLayout.Verbose)
@@ -512,11 +512,11 @@ namespace PdfSharp.Pdf.IO
         this.stream.Position = this.commentPosition + 50;
         WriteRaw("Creation time: " + duration.TotalSeconds.ToString("0.000", CultureInfo.InvariantCulture) + " seconds");
         this.stream.Position = this.commentPosition + 100;
-        WriteRaw("File size: " + fileSize.ToString() + " bytes");
+        WriteRaw("File size: " + fileSize.ToString(CultureInfo.InvariantCulture) + " bytes");
         this.stream.Position = this.commentPosition + 150;
-        WriteRaw("Pages: " + document.Pages.Count.ToString());
+        WriteRaw("Pages: " + document.Pages.Count.ToString(CultureInfo.InvariantCulture));
         this.stream.Position = this.commentPosition + 200;
-        WriteRaw("Objects: " + document.irefTable.objectTable.Count.ToString());
+        WriteRaw("Objects: " + document.irefTable.objectTable.Count.ToString(CultureInfo.InvariantCulture));
       }
     }
 

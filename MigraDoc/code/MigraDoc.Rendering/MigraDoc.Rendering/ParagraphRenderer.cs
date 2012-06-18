@@ -270,7 +270,7 @@ namespace MigraDoc.Rendering
     /// It can be taken before the paragraph is formatted.
     /// </summary>
     /// <remarks>
-    /// The following layout informations are set properly:<br />
+    /// The following layout information is set properly:<br />
     /// MarginTop, MarginLeft, MarginRight, MarginBottom, KeepTogether, KeepWithNext, PagebreakBefore.
     /// </remarks>
     internal override LayoutInfo InitialLayoutInfo
@@ -610,8 +610,7 @@ namespace MigraDoc.Rendering
         if (tabStop.Position.Point > this.formattingArea.Width - this.RightIndent + Tolerance)
           break;
 
-        //if (tabStop.Position.Point + this.formattingArea.X > this.currentXPosition)
-        if (tabStop.Position.Point + this.formattingArea.X > this.currentXPosition + Tolerance) //!!!newTHHO 05.05.09 with Tolerance ...
+        if (tabStop.Position.Point + this.formattingArea.X > this.currentXPosition + Tolerance) // With Tolerance ...
           return tabStop;
 
         lastPosition = tabStop.Position.Point;
@@ -749,7 +748,7 @@ namespace MigraDoc.Rendering
       Rectangle fittingRect = this.formattingArea.GetFittingRect(this.currentYPosition, this.currentVerticalInfo.height);
       if (fittingRect == null)
         GetType();
-      if (fittingRect != null) //!!!newTHHO 10.09.2007
+      if (fittingRect != null)
       {
         this.currentXPosition = fittingRect.X + this.LeftIndent;
         FormatListSymbol();
@@ -1018,7 +1017,6 @@ namespace MigraDoc.Rendering
       TabOffset offset =
         (TabOffset)this.tabOffsets[this.tabIdx];
 #else
-      //!!!modTHHO 07.06.06
       TabOffset offset = this.tabOffsets.Count > this.tabIdx ?
         (TabOffset)this.tabOffsets[this.tabIdx] :
         new TabOffset(0, 0);
@@ -2121,7 +2119,6 @@ namespace MigraDoc.Rendering
       this.lastTabPosition = 0;
       this.currentYPosition += this.currentVerticalInfo.height;
 #if true
-      //!!!newTHHO 25.01.2007 begin
       Rectangle rect = this.formattingArea.GetFittingRect(currentYPosition, this.currentVerticalInfo.height + BottomBorderOffset);
       if (rect == null)
         return false;
@@ -2130,7 +2127,6 @@ namespace MigraDoc.Rendering
       this.currentXPosition = StartXPosition; // depends on "currentVerticalInfo"
       this.currentVerticalInfo = new VerticalLineInfo();
       this.currentVerticalInfo = CalcCurrentVerticalInfo();
-      //!!!newTHHO 25.01.2007 end
 #else
       if (this.formattingArea.GetFittingRect(currentYPosition, this.currentVerticalInfo.height + BottomBorderOffset) == null)
         return false;

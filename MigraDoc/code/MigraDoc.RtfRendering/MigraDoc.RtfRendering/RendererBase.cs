@@ -31,6 +31,7 @@
 using System;
 using System.Collections;
 using System.Diagnostics;
+using System.Globalization;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.IO;
 using MigraDoc.DocumentObjectModel.Tables;
@@ -296,7 +297,7 @@ namespace MigraDoc.RtfRendering
     /// </summary>
     protected void Translate(string valueName, string rtfCtrl, RtfUnit unit, Unit val, bool withStar)
     {
-      Translate(valueName, rtfCtrl, unit, ToRtfUnit(val, RtfUnit.Twips).ToString(), withStar);
+      Translate(valueName, rtfCtrl, unit, ToRtfUnit(val, RtfUnit.Twips).ToString(CultureInfo.InvariantCulture), withStar);
     }
 
     /// <summary>

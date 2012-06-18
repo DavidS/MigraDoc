@@ -29,6 +29,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using PdfSharp.Drawing;
 
 namespace PdfSharp.Charting.Renderers
@@ -232,7 +233,7 @@ namespace PdfSharp.Charting.Renderers
         rendererInfo.XValues = new XValues();
         XSeries xs = rendererInfo.XValues.AddXSeries();
         for (double i = rendererInfo.MinimumScale + 1; i <= rendererInfo.MaximumScale; ++i)
-          xs.Add(i.ToString());
+          xs.Add(i.ToString(CultureInfo.InvariantCulture));
       }
     }
 

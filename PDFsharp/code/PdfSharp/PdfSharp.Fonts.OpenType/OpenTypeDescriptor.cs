@@ -335,6 +335,31 @@ namespace PdfSharp.Fonts.OpenType
       }
     }
 
+    /// <summary>
+    ///   //Converts the width of a glyph identified by its index to PDF design units.
+    /// </summary>
+    public int GlyphIndexToWidth(int glyphIndex)
+    {
+      try
+      {
+        int numberOfHMetrics = fontData.hhea.numberOfHMetrics;
+
+        // glyphIndex >= numberOfHMetrics means the font is mono-spaced and all glyphs have the same width
+        if (glyphIndex >= numberOfHMetrics)
+          glyphIndex = numberOfHMetrics - 1;
+
+        int width = fontData.hmtx.metrics[glyphIndex].advanceWidth;
+
+        return width;
+      }
+      catch (Exception)
+      {
+        GetType();
+        throw;
+      }
+    }
+
+
     public int PdfWidthFromCharCode(char ch)
     {
       int idx = CharCodeToGlyphIndex(ch);

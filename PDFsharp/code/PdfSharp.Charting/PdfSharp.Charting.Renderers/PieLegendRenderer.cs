@@ -28,6 +28,7 @@
 #endregion
 
 using System;
+using System.Globalization;
 using PdfSharp.Drawing;
 
 namespace PdfSharp.Charting.Renderers
@@ -83,7 +84,7 @@ namespace PdfSharp.Charting.Renderers
               leri.EntryText = xseries[index].Value;
           }
           else
-            leri.EntryText = (index + 1).ToString(); // create default/dummy entry
+            leri.EntryText = (index + 1).ToString(CultureInfo.InvariantCulture); // create default/dummy entry
           leri.MarkerPen = pri.LineFormat;
           leri.MarkerBrush = pri.FillFormat;
 

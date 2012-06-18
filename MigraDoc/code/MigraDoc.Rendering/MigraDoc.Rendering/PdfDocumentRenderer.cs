@@ -289,7 +289,7 @@ namespace MigraDoc.Rendering
     /// <summary>
     /// Writes document information like author and subject to the PDF document.
     /// </summary>
-    public void WriteDocumentInformation() //!!!modTHHO 15.08.2006
+    public void WriteDocumentInformation()
     {
       if (!this.document.IsNull("Info"))
       {

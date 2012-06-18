@@ -245,7 +245,7 @@ namespace MigraDoc.Rendering
     }
 
     /// <summary>
-    /// Gets the rendering informations for the page content.
+    /// Gets the rendering information for the page content.
     /// </summary>
     /// <param name="page">The page to render.</param>
     /// <returns>Rendering information for the page content.</returns>
@@ -569,12 +569,10 @@ namespace MigraDoc.Rendering
       {
         case ElementAlignment.Near:
 #if true
-          //!!!newTHHO 22.10.2008 allow negative offsets (supporting "Anschnitt" for images)
-          //if (layoutInfo.MarginLeft < 0)
-          //  layoutInfo.GetType();
+          // Allow negative offsets (supporting "Anschnitt" for images)
           if (layoutInfo.HorizontalReference == HorizontalReference.Page ||
             layoutInfo.HorizontalReference == HorizontalReference.PageMargin)
-            xPos = layoutInfo.MarginLeft; // ignore layoutInfo.Left if absolute position is specified
+            xPos = layoutInfo.MarginLeft; // Ignore layoutInfo.Left if absolute position is specified
           else
             xPos = Math.Max(layoutInfo.MarginLeft, layoutInfo.Left);
 #else

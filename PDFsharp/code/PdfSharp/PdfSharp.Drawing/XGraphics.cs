@@ -3340,7 +3340,10 @@ namespace PdfSharp.Drawing
       //FormattedText formattedText = new FormattedText(text, new CultureInfo("en-us"),
       //  FlowDirection.LeftToRight, font.typeface, font.Size, System.Windows.Media.Brushes.Black);
       FormattedText formattedText = FontHelper.CreateFormattedText(text, font.typeface, font.Size, System.Windows.Media.Brushes.Black);
-      return new XSize(formattedText.WidthIncludingTrailingWhitespace, formattedText.Height);
+      var size1 = FontHelper14.MeasureString(text, font, null);
+      var size2 = new XSize(formattedText.WidthIncludingTrailingWhitespace, formattedText.Height);
+      return new XSize(size1.Width, size2.Height);
+      //return new XSize(formattedText.WidthIncludingTrailingWhitespace, formattedText.Height);
 #else
       return dc.MeasureString(this, text, font, stringFormat);
 #endif

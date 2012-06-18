@@ -132,7 +132,7 @@ namespace PdfSharp.Pdf.Advanced
 
     static string MakeKey(double alpha)
     {
-      return ((int)(1000 * alpha)).ToString();
+      return ((int)(1000 * alpha)).ToString(CultureInfo.InvariantCulture);
     }
 
     /// <summary>

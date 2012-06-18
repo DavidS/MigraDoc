@@ -45,13 +45,13 @@ namespace PdfSharp
   static class PSSR
   {
     // How to use:
-    // Create a function or property for each message text, depending on how much parameters are
-    // part of the message. For the time beginning, type plain English text in the function or property. 
-    // The use of functions is save when a parameter must be changed. The compiler tells you all
+    // Create a function or property for each message text, depending on how many parameters are
+    // part of the message. For the beginning, type plain English text in the function or property. 
+    // The use of functions is safe when a parameter must be changed. The compiler tells you all
     // places in your code that must be modified.
-    // For localization, create a enum value for each function or property with the same name. Then
+    // For localization, create an enum value for each function or property with the same name. Then
     // create localized message files with the enum values as messages identifiers. In the properties
-    // and functions all text is replaced by Format or GetString functions with the according enum value
+    // and functions all text is replaced by Format or GetString functions with the corresponding enum value
     // as first parameter. The use of enums ensures that typing errors in message resource names are 
     // simply impossible. Use the TestResourceMessages function to ensure that each enum value has an 
     // appropriate message text.

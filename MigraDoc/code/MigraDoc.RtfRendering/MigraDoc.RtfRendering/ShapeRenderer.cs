@@ -30,6 +30,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Internals;
 using MigraDoc.DocumentObjectModel.Shapes;
@@ -122,7 +123,7 @@ namespace MigraDoc.RtfRendering
       {
         RenderNameValuePair("fLine", "1");
         TranslateAsNameValuePair("LineFormat.Color", "lineColor", RtfUnit.Undefined, "0");
-        TranslateAsNameValuePair("LineFormat.Width", "lineWidth", RtfUnit.EMU, ToEmu(1).ToString());
+        TranslateAsNameValuePair("LineFormat.Width", "lineWidth", RtfUnit.EMU, ToEmu(1).ToString(CultureInfo.InvariantCulture));
         TranslateAsNameValuePair("LineFormat.DashStyle", "lineDashing", RtfUnit.Undefined, "0");
       }
       else
@@ -661,12 +662,12 @@ namespace MigraDoc.RtfRendering
       else
       {
         if (val is Unit)
-          valueStr = ToRtfUnit((Unit)val, unit).ToString();
+          valueStr = ToRtfUnit((Unit)val, unit).ToString(CultureInfo.InvariantCulture);
         else if (val is Color)
         {
           Color col = (Color)val;
           col = col.GetMixedTransparencyColor();
-          valueStr = (col.R + (col.G * 256) + (col.B * 65536)).ToString();
+          valueStr = (col.R + (col.G * 256) + (col.B * 65536)).ToString(CultureInfo.InvariantCulture);
         }
         else if (val is Enum)
           valueStr = enumTranslationTable[val].ToString();

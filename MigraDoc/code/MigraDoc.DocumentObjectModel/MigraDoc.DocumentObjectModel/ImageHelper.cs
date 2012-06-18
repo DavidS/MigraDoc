@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace MigraDoc.DocumentObjectModel
@@ -46,17 +47,25 @@ namespace MigraDoc.DocumentObjectModel
     /// </summary>
     public static string GetImageName(string root, string filename, string imagePath)
     {
-      List<string> subfolders = new List<string>(imagePath.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries));
-      subfolders.Add("");
-
-      foreach (string subfolder in subfolders)
+      try
       {
-        string fullname = System.IO.Path.Combine(System.IO.Path.Combine(root, subfolder), filename);
-        int pageNumber;
-        string realFile = ExtractPageNumber(fullname, out pageNumber);
+        List<string> subfolders = new List<string>(imagePath.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries));
+        subfolders.Add("");
 
-        if (System.IO.File.Exists(realFile))
-          return fullname;
+        foreach (string subfolder in subfolders)
+        {
+          string fullname = System.IO.Path.Combine(System.IO.Path.Combine(root, subfolder), filename);
+          int pageNumber;
+          string realFile = ExtractPageNumber(fullname, out pageNumber);
+
+          if (System.IO.File.Exists(realFile))
+            return fullname;
+        }
+      }
+      catch (Exception ex)
+      {
+        Debug.Assert(false, "Should never occur with properly formatted Wiki texts. " + ex);
+        //throw;
       }
       return null;
     }

@@ -678,7 +678,7 @@ namespace PdfSharp.Pdf
         if (obj is PdfString)
           date = ((PdfString)obj).Value;
         else if (obj is PdfStringObject)
-          date = ((PdfNameObject)obj).Value;
+          date = ((PdfStringObject)obj).Value;
         else
           throw new InvalidCastException("GetName: Object is not a name.");
 

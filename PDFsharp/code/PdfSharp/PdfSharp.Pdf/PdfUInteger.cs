@@ -74,7 +74,7 @@ namespace PdfSharp.Pdf
     /// </summary>
     public override string ToString()
     {
-      return this.value.ToString();
+      return value.ToString(CultureInfo.InvariantCulture);
     }
 
     /// <summary>

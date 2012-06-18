@@ -29,6 +29,7 @@
 #endregion
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -102,7 +103,7 @@ namespace MigraDoc.RtfRendering
             else
             {
               strBuilder.Append(@"\u");
-              strBuilder.Append(((int)ch).ToString());
+              strBuilder.Append(((int)ch).ToString(CultureInfo.InvariantCulture));
               strBuilder.Append('?');
             }
             break;
@@ -216,7 +217,7 @@ namespace MigraDoc.RtfRendering
     /// </summary>
     public void WriteControl(string ctrl, int value, bool withStar)
     {
-      WriteControl(ctrl, value.ToString(), withStar);
+      WriteControl(ctrl, value.ToString(CultureInfo.InvariantCulture), withStar);
     }
 
     /// <summary>
@@ -232,7 +233,7 @@ namespace MigraDoc.RtfRendering
     /// </summary>
     public void WriteControl(string ctrl, int value)
     {
-      WriteControl(ctrl, value.ToString());
+      WriteControl(ctrl, value.ToString(CultureInfo.InvariantCulture));
     }
 
     /// <summary>
@@ -258,7 +259,7 @@ namespace MigraDoc.RtfRendering
     /// </summary>
     public void WriteControlWithStar(string ctrl, int value)
     {
-      WriteControlWithStar(ctrl, value.ToString());
+      WriteControlWithStar(ctrl, value.ToString(CultureInfo.InvariantCulture));
     }
 
     /// <summary>

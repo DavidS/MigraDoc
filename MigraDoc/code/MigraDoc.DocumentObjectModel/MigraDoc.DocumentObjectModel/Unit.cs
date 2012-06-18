@@ -659,7 +659,7 @@ namespace MigraDoc.DocumentObjectModel
 
     /// <summary>
     /// Memberwise comparison. To compare by value, 
-    /// use code like Math.Abs(a.Point - b.Point) &lt; 1e5.
+    /// use code like Math.Abs(a.Point - b.Point) &lt; 1e-5.
     /// </summary>
     public static bool operator ==(Unit l, Unit r)
     {
@@ -668,7 +668,7 @@ namespace MigraDoc.DocumentObjectModel
 
     /// <summary>
     /// Memberwise comparison. To compare by value, 
-    /// use code like Math.Abs(a.Point - b.Point) &lt; 1e5.
+    /// use code like Math.Abs(a.Point - b.Point) &lt; 1e-5.
     /// </summary>
     public static bool operator !=(Unit l, Unit r)
     {
