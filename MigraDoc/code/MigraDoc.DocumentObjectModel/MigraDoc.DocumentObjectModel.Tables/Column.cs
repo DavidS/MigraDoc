@@ -115,7 +115,7 @@ namespace MigraDoc.DocumentObjectModel.Tables
     {
       get
       {
-        if (IsNull("Index"))
+        if (index.IsNull)
         {
           Columns clms = this.Parent as Columns;
           SetValue("Index", clms.IndexOf(this));

@@ -167,9 +167,6 @@ namespace MigraDoc.DocumentObjectModel.Internals
 
     public override object GetValue(DocumentObject dom, GV flags)
     {
-      if (!Enum.IsDefined(typeof(GV), flags))
-        throw new InvalidEnumArgumentException("flags", (int)flags, typeof(GV));
-
       object val;
       if (FieldInfo != null)
         val = FieldInfo.GetValue(dom);
@@ -248,9 +245,6 @@ namespace MigraDoc.DocumentObjectModel.Internals
 
     public override object GetValue(DocumentObject dom, GV flags)
     {
-      if (!Enum.IsDefined(typeof(GV), flags))
-        throw new InvalidEnumArgumentException("flags", (int)flags, typeof(GV));
-
       object val;
       if (FieldInfo != null)
         val = FieldInfo.GetValue(dom);
@@ -322,9 +316,6 @@ namespace MigraDoc.DocumentObjectModel.Internals
 
     public override object GetValue(DocumentObject dom, GV flags)
     {
-      if (!Enum.IsDefined(typeof(GV), flags))
-        throw new InvalidEnumArgumentException("flags", (int)flags, typeof(GV));
-
       FieldInfo fieldInfo = FieldInfo;
       DocumentObject val;
       if (fieldInfo != null)
@@ -422,9 +413,6 @@ namespace MigraDoc.DocumentObjectModel.Internals
 
     public override object GetValue(DocumentObject dom, GV flags)
     {
-      if (!Enum.IsDefined(typeof(GV), flags))
-        throw new InvalidEnumArgumentException("flags", (int)flags, typeof(GV));
-
       Debug.Assert(this.memberInfo is FieldInfo, "Properties of DocumentObjectCollection not allowed.");
       DocumentObjectCollection val = FieldInfo.GetValue(dom) as DocumentObjectCollection;
       if (val == null && flags == GV.ReadWrite)
