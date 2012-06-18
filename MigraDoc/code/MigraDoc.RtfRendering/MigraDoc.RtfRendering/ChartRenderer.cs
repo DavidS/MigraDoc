@@ -173,7 +173,7 @@ namespace MigraDoc.RtfRendering
     {
       try
       {
-        float resolution = 96;
+        float resolution = 300;
         int horzPixels = (int)(GetShapeWidth().Inch * resolution);
         int vertPixels = (int)(GetShapeHeight().Inch * resolution);
         Bitmap bmp = new Bitmap(horzPixels, vertPixels);
