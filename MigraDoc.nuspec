@@ -26,7 +26,7 @@
     <file src="MigraDoc\code\TestFormsApplication\bin\Release\de\PdfSharp.resources.dll" target="lib\net35\de" />
     <file src="MigraDoc\code\TestFormsApplication\bin\Release\MigraDoc.DocumentObjectModel.dll" target="lib\net35" />
     <file src="MigraDoc\code\TestFormsApplication\bin\Release\MigraDoc.Rendering.dll" target="lib\net35" />
-    <file src="MigraDoc\code\TestFormsApplication\bin\Release\MigraDoc.RtfRendering.dll" target="lib\net3" />
+    <file src="MigraDoc\code\TestFormsApplication\bin\Release\MigraDoc.RtfRendering.dll" target="lib\net35" />
     <file src="MigraDoc\code\TestFormsApplication\bin\Release\PdfSharp.Charting.dll" target="lib\net35" />
     <file src="MigraDoc\code\TestFormsApplication\bin\Release\PdfSharp.dll" target="lib\net35" />
   </files>
