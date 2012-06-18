@@ -2609,6 +2609,10 @@ namespace MigraDoc.DocumentObjectModel.IO
             finish = true;
             break;
 
+          case Symbol.Eof:
+            ThrowParserException(DomMsgID.UnexpectedEndOfFile);
+            break;
+
           default:
             AdjustToNextStatement();
             break;
