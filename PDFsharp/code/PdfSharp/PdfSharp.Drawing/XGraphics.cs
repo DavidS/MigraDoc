@@ -38,6 +38,7 @@ using System.Drawing.Imaging;
 #endif
 #if WPF
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 #endif
 using PdfSharp.Internal;
@@ -93,6 +94,10 @@ namespace PdfSharp.Drawing
           this.pageSizePoints = new XSize(XUnit.FromCentimeter(size.width), XUnit.FromCentimeter(size.height));
           break;
 
+        case XGraphicsUnit.Presentation:
+          this.pageSizePoints = new XSize(XUnit.FromPresentation(size.width), XUnit.FromPresentation(size.height));
+          break;
+
         default:
           throw new NotImplementedException("unit");
       }
@@ -143,6 +148,63 @@ namespace PdfSharp.Drawing
           this.pageSizePoints = new XSize(XUnit.FromCentimeter(size.width), XUnit.FromCentimeter(size.height));
           break;
 
+        case XGraphicsUnit.Presentation:
+          this.pageSizePoints = new XSize(XUnit.FromPresentation(size.width), XUnit.FromPresentation(size.height));
+          break;
+
+        default:
+          throw new NotImplementedException("unit");
+      }
+
+      this.pageDirection = pageDirection;
+      Initialize();
+    }
+#endif
+
+#if SILVERLIGHT
+    /// <summary>
+    /// Initializes a new instance of the XGraphics class.
+    /// </summary>
+    /// <param name="canvas">The canvas.</param>
+    /// <param name="size">The size.</param>
+    /// <param name="pageUnit">The page unit.</param>
+    /// <param name="pageDirection">The page direction.</param>
+    XGraphics(Canvas canvas, XSize size, XGraphicsUnit pageUnit, XPageDirection pageDirection)
+    {
+      //throw new ArgumentNullException("canvas");
+      if (canvas == null)
+        canvas = new Canvas();
+
+      this.dc = new DrawingContext(canvas);
+
+      this.gsStack = new GraphicsStateStack(this);
+      this.targetContext = XGraphicTargetContext.WPF;
+
+      this.drawGraphics = true;
+      this.pageSize = new XSize(size.width, size.height);
+      this.pageUnit = pageUnit;
+      switch (pageUnit)
+      {
+        case XGraphicsUnit.Point:
+          this.pageSizePoints = new XSize(size.width, size.height);
+          break;
+
+        case XGraphicsUnit.Inch:
+          this.pageSizePoints = new XSize(XUnit.FromInch(size.width), XUnit.FromInch(size.height));
+          break;
+
+        case XGraphicsUnit.Millimeter:
+          this.pageSizePoints = new XSize(XUnit.FromMillimeter(size.width), XUnit.FromMillimeter(size.height));
+          break;
+
+        case XGraphicsUnit.Centimeter:
+          this.pageSizePoints = new XSize(XUnit.FromCentimeter(size.width), XUnit.FromCentimeter(size.height));
+          break;
+
+        case XGraphicsUnit.Presentation:
+          this.pageSizePoints = new XSize(XUnit.FromPresentation(size.width), XUnit.FromPresentation(size.height));
+          break;
+
         default:
           throw new NotImplementedException("unit");
       }
@@ -188,20 +250,20 @@ namespace PdfSharp.Drawing
       page.RenderContent = content;
 
 #if GDI
-      // HACK: 
+      // HACK: This does not work with MediumTrust
       this.gfx = Graphics.FromHwnd(IntPtr.Zero);
       this.targetContext = XGraphicTargetContext.GDI;
       //Bitmap bm = new Bitmap(10, 10);
       //this.gfx = Graphics.FromImage(bm);
 #endif
-#if WPF
-#if !SILVERLIGHT
+#if WPF && !SILVERLIGHT
       this.dv = new DrawingVisual();
       this.dc = this.dv.RenderOpen();
       this.targetContext = XGraphicTargetContext.WPF;
-#else
-      // AGHACK
 #endif
+#if SILVERLIGHT
+      this.dc = new DrawingContext(new Canvas());
+      this.targetContext = XGraphicTargetContext.WPF;
 #endif
 #if GDI && WPF
       this.targetContext = PdfSharp.Internal.TargetContextHelper.TargetContext;
@@ -224,6 +286,10 @@ namespace PdfSharp.Drawing
 
         case XGraphicsUnit.Centimeter:
           this.pageSize = new XSize(XUnit.FromPoint(page.Width).Centimeter, XUnit.FromPoint(page.Height).Centimeter);
+          break;
+
+        case XGraphicsUnit.Presentation:
+          this.pageSize = new XSize(XUnit.FromPoint(page.Width).Presentation, XUnit.FromPoint(page.Height).Presentation);
           break;
 
         default:
@@ -321,8 +387,8 @@ namespace PdfSharp.Drawing
       Initialize();
 #endif
 #if WPF && !GDI
-#if !SILVERLIGHT
       this.targetContext = XGraphicTargetContext.WPF;
+#if !SILVERLIGHT
       // If form.Owner is null create a meta file.
       if (form.Owner == null)
       {
@@ -340,7 +406,8 @@ namespace PdfSharp.Drawing
       this.pageSize = form.Size;
       Initialize();
 #else
-      // AGHACK
+      throw new NotImplementedException(); // AGHACK
+      //Initialize();
 #endif
 #endif
     }
@@ -355,12 +422,11 @@ namespace PdfSharp.Drawing
 #if GDI
       gfx = new XGraphics((System.Drawing.Graphics)null, size, pageUnit, pageDirection);
 #endif
-#if WPF
-#if !SILVERLIGHT
+#if WPF && !SILVERLIGHT
       gfx = new XGraphics((System.Windows.Media.DrawingContext)null, size, pageUnit, pageDirection);
-#else
-      // AGHACK
 #endif
+#if SILVERLIGHT
+      gfx = new XGraphics(new Canvas(), size, pageUnit, pageDirection);
 #endif
       return gfx;
     }
@@ -410,6 +476,16 @@ namespace PdfSharp.Drawing
     public static XGraphics FromDrawingContext(DrawingContext drawingContext, XSize size, XGraphicsUnit unit)
     {
       return new XGraphics(drawingContext, size, unit, XPageDirection.Downwards);
+    }
+#endif
+
+#if SILVERLIGHT
+    /// <summary>
+    /// Creates a new instance of the XGraphics class from a System.Windows.Media.DrawingContext object.
+    /// </summary>
+    public static XGraphics FromCanvas(Canvas canvas, XSize size, XGraphicsUnit unit)
+    {
+      return new XGraphics(canvas, size, unit, XPageDirection.Downwards);
     }
 #endif
 
@@ -566,13 +642,14 @@ namespace PdfSharp.Drawing
             MatrixTransform transform = new MatrixTransform((System.Windows.Media.Matrix)matrix);
             dc.PushTransform(transform);
 #else
-            // AGHACK
+            MatrixTransform transform2 = new MatrixTransform();
+            transform2.Matrix = (System.Windows.Media.Matrix)matrix;
+            dc.PushTransform(transform2);
 #endif
           }
         }
       }
 #endif
-
       if (this.pageDirection == XPageDirection.Upwards)
         matrix.Prepend(new XMatrix(1, 0, 0, -1, 0, pageHeight));
 
@@ -614,15 +691,13 @@ namespace PdfSharp.Drawing
         }
 #endif
 #if WPF
-#if !SILVERLIGHT
         if (this.dc != null)
         {
           this.dc.Close();
+#if !SILVERLIGHT
           this.dv = null;
-        }
-#else
-        // AGHACK
 #endif
+        }
 #endif
         this.drawGraphics = false;
 
@@ -748,11 +823,7 @@ namespace PdfSharp.Drawing
         {
           Rect rc = new Rect();
           rc.Width = rc.Height = 10000;
-#if !SILVERLIGHT
           this.dc.DrawRectangle(new SolidColorBrush(color.ToWpfColor()), null, rc);
-#else
-          // AGHACK
-#endif
         }
 #endif
       }
@@ -824,12 +895,8 @@ namespace PdfSharp.Drawing
           this.gfx.DrawLine(pen.RealizeGdiPen(), (float)x1, (float)y1, (float)x2, (float)y2);
 #endif
 #if WPF
-#if !SILVERLIGHT
         if (this.targetContext == XGraphicTargetContext.WPF)
           this.dc.DrawLine(pen.RealizeWpfPen(), new System.Windows.Point(x1, y1), new System.Windows.Point(x2, y2));
-#else
-        // AGHACK
-#endif
 #endif
       }
 
@@ -1015,6 +1082,8 @@ namespace PdfSharp.Drawing
           PathGeometry geo = new PathGeometry();
           geo.Figures.Add(figure);
           this.dc.DrawGeometry(null, pen.RealizeWpfPen(), geo);
+#else
+          // AGHACK
 #endif
         }
 #endif
@@ -1096,6 +1165,8 @@ namespace PdfSharp.Drawing
           PathGeometry geo = new PathGeometry();
           geo.Figures.Add(figure);
           this.dc.DrawGeometry(null, pen.RealizeWpfPen(), geo);
+#else
+          // AGHACK
 #endif
         }
 #endif
@@ -1364,9 +1435,7 @@ namespace PdfSharp.Drawing
 #if WPF
         if (this.targetContext == XGraphicTargetContext.WPF)
         {
-#if !SILVERLIGHT
           this.dc.DrawRectangle(null, pen.RealizeWpfPen(), new Rect(x, y, width, height));
-#endif
         }
 #endif
       }
@@ -1898,14 +1967,10 @@ namespace PdfSharp.Drawing
 #if WPF
         if (this.targetContext == XGraphicTargetContext.WPF)
         {
-#if !SILVERLIGHT
           this.dc.DrawRoundedRectangle(
             brush != null ? brush.RealizeWpfBrush() : null,
             pen != null ? pen.RealizeWpfPen() : null,
             new Rect(x, y, width, height), ellipseWidth / 2, ellipseHeight / 2);
-#else
-          // AGHACK
-#endif
         }
 #endif
       }
@@ -1972,13 +2037,9 @@ namespace PdfSharp.Drawing
 #if WPF
         if (this.targetContext == XGraphicTargetContext.WPF)
         {
-#if !SILVERLIGHT
           double radiusX = width / 2;
           double radiusY = height / 2;
           this.dc.DrawEllipse(null, pen.RealizeWpfPen(), new System.Windows.Point(x + radiusX, y + radiusY), radiusX, radiusY);
-#else
-          // AGHACK
-#endif
         }
 #endif
       }
@@ -2042,13 +2103,9 @@ namespace PdfSharp.Drawing
 #if WPF
         if (this.targetContext == XGraphicTargetContext.WPF)
         {
-#if !SILVERLIGHT
           double radiusX = width / 2;
           double radiusY = height / 2;
           this.dc.DrawEllipse(brush.RealizeWpfBrush(), null, new System.Windows.Point(x + radiusX, y + radiusY), radiusX, radiusY);
-#else
-          // AGHACK
-#endif
         }
 #endif
       }
@@ -2115,13 +2172,9 @@ namespace PdfSharp.Drawing
 #if WPF
         if (this.targetContext == XGraphicTargetContext.WPF)
         {
-#if !SILVERLIGHT
           double radiusX = width / 2;
           double radiusY = height / 2;
           this.dc.DrawEllipse(brush.RealizeWpfBrush(), pen.RealizeWpfPen(), new System.Windows.Point(x + radiusX, y + radiusY), radiusX, radiusY);
-#else
-          // AGHACK
-#endif
         }
 #endif
       }
@@ -3254,7 +3307,7 @@ namespace PdfSharp.Drawing
           //this.dc.DrawText(formattedText, layoutRectangle.Location.ToPoint());
           this.dc.DrawText(formattedText, new System.Windows.Point(x, y));
 #else
-          // AGHACK
+          dc.DrawString(this, text, font, brush, layoutRectangle, format);
 #endif
         }
 #endif
@@ -3289,8 +3342,7 @@ namespace PdfSharp.Drawing
       FormattedText formattedText = FontHelper.CreateFormattedText(text, font.typeface, font.Size, System.Windows.Media.Brushes.Black);
       return new XSize(formattedText.WidthIncludingTrailingWhitespace, formattedText.Height);
 #else
-      // AGHACK
-      return new XSize(100, 20);
+      return dc.MeasureString(this, text, font, stringFormat);
 #endif
 
 #endif
@@ -3433,33 +3485,14 @@ namespace PdfSharp.Drawing
 #if WPF
         if (this.targetContext == XGraphicTargetContext.WPF)
         {
-#if !SILVERLIGHT
           if (image.wpfImage != null)
           {
-            //InterpolationMode interpolationMode = InterpolationMode.Invalid;
-            //if (!image.Interpolate)
-            //{
-            //  interpolationMode = gfx.InterpolationMode;
-            //  //gfx.InterpolationMode = InterpolationMode.NearestNeighbor;
-            //}
-
             this.dc.DrawImage(image.wpfImage, new Rect(x, y, image.PointWidth, image.PointHeight));
-
-            //if (!image.Interpolate)
-            //  gfx.InterpolationMode = interpolationMode;
           }
           else
           {
             DrawMissingImageRect(new XRect(x, y, width, height));
-            //Rect rect = new Rect(x, y, width, height);
-            //System.Windows.Media.Pen pen = new System.Windows.Media.Pen(System.Windows.Media.Brushes.Red, 1);
-            //this.dc.DrawRectangle(null, pen, new Rect(x, y, width, height));
-            //this.dc.DrawLine(pen, new System.Windows.Point(x, y), new System.Windows.Point(x + width, y + height));
-            //this.dc.DrawLine(pen, new System.Windows.Point(x + width, y), new System.Windows.Point(x, y + height));
           }
-#else
-          // AGHACK
-#endif
         }
 #endif
       }
@@ -3559,7 +3592,6 @@ namespace PdfSharp.Drawing
 #if WPF
         if (this.targetContext == XGraphicTargetContext.WPF)
         {
-#if !SILVERLIGHT
           if (image.wpfImage != null)
           {
             //InterpolationMode interpolationMode = InterpolationMode.Invalid;
@@ -3588,9 +3620,6 @@ namespace PdfSharp.Drawing
             else
               DrawMissingImageRect(new XRect(x, y, width, height));
           }
-#else
-          // AGHACK
-#endif
         }
 #endif
       }
@@ -3677,7 +3706,6 @@ namespace PdfSharp.Drawing
 #if WPF
         if (this.targetContext == XGraphicTargetContext.WPF)
         {
-#if !SILVERLIGHT
           if (image.wpfImage != null)
           {
             //InterpolationMode interpolationMode = InterpolationMode.Invalid;
@@ -3698,15 +3726,7 @@ namespace PdfSharp.Drawing
           else
           {
             DrawMissingImageRect(destRect);
-            //Rect rect = new Rect(x, y, width, height);
-            //System.Windows.Media.Pen pen = new System.Windows.Media.Pen(System.Windows.Media.Brushes.Red, 1);
-            //this.dc.DrawRectangle(null, pen, new Rect(x, y, width, height));
-            //this.dc.DrawLine(pen, new System.Windows.Point(x, y), new System.Windows.Point(x + width, y + height));
-            //this.dc.DrawLine(pen, new System.Windows.Point(x + width, y), new System.Windows.Point(x, y + height));
           }
-#else
-          // AGHACK
-#endif
         }
 #endif
       }
@@ -3737,18 +3757,18 @@ namespace PdfSharp.Drawing
 #if WPF
       if (this.targetContext == XGraphicTargetContext.WPF)
       {
-#if !SILVERLIGHT
         double x = rect.x;
         double y = rect.y;
         double width = rect.width;
         double height = rect.height;
+#if !SILVERLIGHT
         System.Windows.Media.Pen pen = new System.Windows.Media.Pen(System.Windows.Media.Brushes.Red, 1);
+#else
+        System.Windows.Media.Pen pen = new System.Windows.Media.Pen(new SolidColorBrush(Colors.Red), 1);
+#endif
         this.dc.DrawRectangle(null, pen, new Rect(x, y, width, height));
         this.dc.DrawLine(pen, new System.Windows.Point(x, y), new System.Windows.Point(x + width, y + height));
         this.dc.DrawLine(pen, new System.Windows.Point(x + width, y), new System.Windows.Point(x, y + height));
-#else
-        // AGHACK
-#endif
       }
 #endif
     }
@@ -4381,12 +4401,13 @@ namespace PdfSharp.Drawing
         {
 #if !SILVERLIGHT
           MatrixTransform mt = new MatrixTransform(transform.ToWpfMatrix());
+#else
+          MatrixTransform mt = new MatrixTransform();
+          mt.Matrix = transform.ToWpfMatrix();
+#endif
           if (order == XMatrixOrder.Append)
             mt = (MatrixTransform)mt.Inverse;
           this.gsStack.Current.SetTransform(mt);
-#else
-          // AGHACK
-#endif
         }
 #endif
         if (this.renderer != null)
@@ -4839,7 +4860,9 @@ namespace PdfSharp.Drawing
     /// <summary>
     /// Always defined System.Drawing.Graphics object. Used as 'query context' for PDF pages.
     /// </summary>
+#if !SILVERLIGHT
     DrawingVisual dv;
+#endif
     internal DrawingContext dc;
 #endif
 

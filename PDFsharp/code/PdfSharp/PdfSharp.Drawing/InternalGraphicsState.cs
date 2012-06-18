@@ -136,16 +136,12 @@ namespace PdfSharp.Drawing
 #if WPF
       if (this.gfx.targetContext == XGraphicTargetContext.WPF)
       {
-#if !SILVERLIGHT
         for (int idx = 0; idx < this.transformPushLevel; idx++)
           this.gfx.dc.Pop();
         this.transformPushLevel = 0;
         for (int idx = 0; idx < this.geometryPushLevel; idx++)
           this.gfx.dc.Pop();
         this.geometryPushLevel = 0;
-#else
-        // AGHACK
-#endif
       }
 #endif
     }
@@ -162,23 +158,15 @@ namespace PdfSharp.Drawing
 #if WPF
     public void SetTransform(MatrixTransform transform)
     {
-#if !SILVERLIGHT
       this.gfx.dc.PushTransform(transform);
       this.transformPushLevel++;
-#else
-      // AGHACK
-#endif
     }
     int transformPushLevel;
 
     public void SetClip(Geometry geometry)
     {
-#if !SILVERLIGHT
       this.gfx.dc.PushClip(geometry);
       this.geometryPushLevel++;
-#else
-      // AGHACK
-#endif
     }
     int geometryPushLevel;
 

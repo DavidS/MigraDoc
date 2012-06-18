@@ -248,24 +248,24 @@ namespace PdfSharp.Drawing.Layout
         }
         else
         {
-          double width = this.spaceWidth + block.Width;
+          double width = block.Width; //!!!modTHHO 19.11.09 don't add this.spaceWidth here
           if ((x + width <= rectWidth || x == 0) && block.Type != BlockType.LineBreak)
           {
             block.Location = new XPoint(x, y);
-            x += width;
+            x += width + spaceWidth; //!!!modTHHO 19.11.09 add this.spaceWidth here
           }
           else
           {
             AlignLine(firstIndex, idx - 1, rectWidth);
             firstIndex = idx;
-            y += this.lineSpace;
+            y += lineSpace;
             if (y > rectHeight)
             {
               block.Stop = true;
               break;
             }
             block.Location = new XPoint(0, y);
-            x = width;
+            x = width + spaceWidth; //!!!modTHHO 19.11.09 add this.spaceWidth here
           }
         }
       }

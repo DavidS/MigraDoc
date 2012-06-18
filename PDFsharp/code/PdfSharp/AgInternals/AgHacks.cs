@@ -73,23 +73,23 @@ namespace PdfSharp
     { }
   }
 
-  public class FileNotFoundException : Exception
-  {
-    public FileNotFoundException()
-    { }
+  //public class FileNotFoundException : Exception
+  //{
+  //  public FileNotFoundException()
+  //  { }
 
-    public FileNotFoundException(string message)
-      : base(message)
-    { }
+  //  public FileNotFoundException(string message)
+  //    : base(message)
+  //  { }
 
-    public FileNotFoundException(string message, string path)
-      : base(message + "/" + path)
-    { }
+  //  public FileNotFoundException(string message, string path)
+  //    : base(message + "/" + path)
+  //  { }
 
-    public FileNotFoundException(string message, Exception innerException)
-      : base(message, innerException)
-    { }
-  }
+  //  public FileNotFoundException(string message, Exception innerException)
+  //    : base(message, innerException)
+  //  { }
+  //}
 
   class Serializable : Attribute
   { }

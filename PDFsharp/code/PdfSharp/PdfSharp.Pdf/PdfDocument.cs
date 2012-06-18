@@ -205,7 +205,8 @@ namespace PdfSharp.Pdf
     internal bool CanModify
     {
       //get {return this.state == DocumentState.Created || this.state == DocumentState.Modifyable;}
-      get { return true; }
+      // THHO4STLA: TODO: correct implementation
+      get { return openMode == PdfDocumentOpenMode.Modify; } // TODO: correct implementation
     }
 
     /// <summary>
@@ -230,8 +231,7 @@ namespace PdfSharp.Pdf
         }
         finally
         {
-          if (writer != null)
-            writer.Close();
+          writer.Close();
         }
       }
     }
@@ -273,8 +273,13 @@ namespace PdfSharp.Pdf
       }
       finally
       {
-        if (stream != null && closeStream)
-          stream.Close();
+        if (stream != null)
+        {
+          if (closeStream)
+            stream.Close();
+          else
+            stream.Position = 0; // Reset the stream position if the stream is left open.
+        }
         if (writer != null)
           writer.Close(closeStream);
       }

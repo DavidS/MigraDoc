@@ -173,8 +173,8 @@ namespace PdfSharp.Drawing
       System.Windows.Size size = new System.Windows.Size(δx, δy);
       bool isLargeArc = Math.Abs(sweepAngle) >= 180;
       SweepDirection sweepDirection = sweepAngle > 0 ? SweepDirection.Clockwise : SweepDirection.Counterclockwise;
-      bool isStroked = true;
 #if !SILVERLIGHT
+      bool isStroked = true;
       ArcSegment seg = new ArcSegment(destPoint, size, 0, isLargeArc, sweepDirection, isStroked);
 #else
       ArcSegment seg = new ArcSegment();
@@ -183,7 +183,7 @@ namespace PdfSharp.Drawing
       seg.RotationAngle = 0;
       seg.IsLargeArc = isLargeArc;
       seg.SweepDirection = sweepDirection;
-      // isStroked does not exist in Silverlight 2
+      // isStroked does not exist in Silverlight 3
 #endif
       return seg;
     }

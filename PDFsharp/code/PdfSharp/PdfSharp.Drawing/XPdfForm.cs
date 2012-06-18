@@ -74,7 +74,7 @@ namespace PdfSharp.Drawing
 
       path = Path.GetFullPath(path);
       if (!File.Exists(path))
-        throw new FileNotFoundException(PSSR.FileNotFound(path), path);
+        throw new FileNotFoundException(PSSR.FileNotFound(path));
 
       if (PdfReader.TestPdfFile(path) == 0)
         throw new ArgumentException("The specified file has no valid PDF file header.", "path");

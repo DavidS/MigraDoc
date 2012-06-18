@@ -231,10 +231,14 @@ namespace PdfSharp.Drawing
       if (this.fontFamilies.ContainsKey(key))
         throw new ArgumentException("An entry with the specified family name already exists.");
 
+#if !SILVERLIGHT
       System.Windows.Media.FontFamily fontFamily = new System.Windows.Media.FontFamily(baseUri, familyName);
+#else
+      System.Windows.Media.FontFamily fontFamily = new System.Windows.Media.FontFamily(familyName);
+#endif
 
       // Check whether font data realy exists
-#if DEBUG
+#if DEBUG && !SILVERLIGHT
       ICollection<Typeface> list = fontFamily.GetTypefaces();
       foreach (Typeface typeFace in list)
       {

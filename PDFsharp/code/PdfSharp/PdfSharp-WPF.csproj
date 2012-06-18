@@ -184,6 +184,7 @@
     <Compile Include="PdfSharp.Pdf.AcroForms\PdfTextField.cs" />
     <Compile Include="PdfSharp.Pdf.Actions\enums\PdfNamedActionNames.cs" />
     <Compile Include="PdfSharp.Pdf.Actions\PdfAction.cs" />
+    <Compile Include="PdfSharp.Pdf.Advanced\PdfImage.FaxEncode.cs" />
     <Compile Include="PdfSharp.Pdf.Advanced\PdfObjectInternals.cs" />
     <Compile Include="PdfSharp.Pdf.Advanced\PdfDictionaryWithContentStream.cs" />
     <Compile Include="PdfSharp.Pdf.Advanced\IContentStream.cs" />

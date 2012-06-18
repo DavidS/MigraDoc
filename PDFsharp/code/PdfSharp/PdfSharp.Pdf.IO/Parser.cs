@@ -181,7 +181,7 @@ namespace PdfSharp.Pdf.IO
           return pdfObject;
 
         case Symbol.Boolean:
-          pdfObject = new PdfBooleanObject(this.document, this.lexer.Token == Boolean.TrueString);
+          pdfObject = new PdfBooleanObject(this.document, string.Compare(this.lexer.Token, Boolean.TrueString, true) == 0); //!!!mod THHO 19.11.09
           pdfObject.SetObjectID(objectNumber, generationNumber);
           ReadSymbol(Symbol.EndObj);
           return pdfObject;
@@ -222,7 +222,7 @@ namespace PdfSharp.Pdf.IO
 
         default:
           // Should not come here anymore
-          throw new NotImplementedException("unknown token");
+          throw new NotImplementedException("unknown token \"" + symbol + "\"");
       }
       symbol = ScanNextToken();
       if (symbol == Symbol.BeginStream)
@@ -705,9 +705,15 @@ namespace PdfSharp.Pdf.IO
       //string token;
       //int xrefOffset = 0;
       int length = lexer.PdfLength;
+#if true
+      string trail = this.lexer.ReadRawString(length - 131, 130); //lexer.Pdf.Substring(length - 30);
+      int idx = trail.IndexOf("startxref");
+      this.lexer.Position = length - 131 + idx;
+#else
       string trail = this.lexer.ReadRawString(length - 31, 30); //lexer.Pdf.Substring(length - 30);
       int idx = trail.IndexOf("startxref");
       this.lexer.Position = length - 31 + idx;
+#endif
       ReadSymbol(Symbol.StartXRef);
       this.lexer.Position = ReadInteger();
 

@@ -31,7 +31,9 @@
 using System;
 using System.Diagnostics;
 using System.Text;
+#if !WPF
 using System.Drawing;
+#endif
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.Rendering;
 using PdfSharp.Pdf;

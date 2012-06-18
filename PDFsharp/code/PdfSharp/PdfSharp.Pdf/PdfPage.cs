@@ -146,8 +146,8 @@ namespace PdfSharp.Pdf
     /// </summary>
     public PageOrientation Orientation
     {
-      get { return this.orientation; }
-      set { this.orientation = value; }
+      get { return orientation; }
+      set { orientation = value; }
     }
     PageOrientation orientation;
 
@@ -163,11 +163,12 @@ namespace PdfSharp.Pdf
           throw new InvalidEnumArgumentException("value", (int)value, typeof(PageSize));
 
         XSize size = PageSizeConverter.ToSize(value);
-        if (this.orientation == PageOrientation.Portrait)
+        // THHO: MediaBox is always in Portrait mode (see Height, Width)
+        /*if (this.orientation == PageOrientation.Portrait)*/
           MediaBox = new PdfRectangle(0, 0, size.Width, size.Height);
-        else
-          MediaBox = new PdfRectangle(0, 0, size.Height, size.Width);
-        this.pageSize = value;
+        /*else
+          MediaBox = new PdfRectangle(0, 0, size.Height, size.Width);*/
+        pageSize = value;
       }
     }
     PageSize pageSize;
@@ -562,8 +563,10 @@ namespace PdfSharp.Pdf
       // HACK: temporarily flip media box if Landscape
       PdfRectangle mediaBox = MediaBox;
       // TODO: Take /Rotate into account
-      if (this.orientation == PageOrientation.Landscape)
+      if (orientation == PageOrientation.Landscape)
         MediaBox = new PdfRectangle(mediaBox.X1, mediaBox.Y1, mediaBox.Y2, mediaBox.X2);
+//#warning THHO4STLA: warum nicht new PdfRectangle(mediaBox.Y1, mediaBox.X1, mediaBox.Y2, mediaBox.X2)? - siehe auch Orientation
+//#warning THHO4STLA: CropBox, BleedBox etc. auch drehen?
 
 #if true
       // Add transparency group to prevent rendering problems of Adobe viewer

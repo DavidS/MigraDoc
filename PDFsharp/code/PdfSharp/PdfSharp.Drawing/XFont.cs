@@ -150,7 +150,7 @@ namespace PdfSharp.Drawing
     /// </summary>
     void Initialize()
     {
-      XFontMetrics fm;
+      XFontMetrics fm = null;
 
 #if DEBUG___
       FontData[] fontDataArray = FontDataStock.Global.GetFontDataList();
@@ -258,7 +258,8 @@ namespace PdfSharp.Drawing
       Debug.Assert(this.cellDescent == 0 || this.cellDescent == Math.Abs(fm.Descent));
       this.cellDescent = Math.Abs(fm.Descent);
 #else
-
+      if (fm != null)
+        fm.GetType();
 #endif
 #endif
     }

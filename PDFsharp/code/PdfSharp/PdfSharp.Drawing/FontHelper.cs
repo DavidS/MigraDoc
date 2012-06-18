@@ -39,6 +39,7 @@ using System.IO;
 //#endif
 #if WPF
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 #endif
 using PdfSharp.Internal;
@@ -80,7 +81,6 @@ namespace PdfSharp.Drawing
 
     //private static List<Typeface> s_typefaces;
 
-#if !SILVERLIGHT
     /// <summary>
     /// Creates a typeface.
     /// </summary>
@@ -98,6 +98,7 @@ namespace PdfSharp.Drawing
       return typeface;
     }
 
+#if !SILVERLIGHT
     /// <summary>
     /// Creates the formatted text.
     /// </summary>
@@ -115,6 +116,22 @@ namespace PdfSharp.Drawing
       //formattedText.SetFontStyle(FontStyles.Oblique);
       //formattedText.SetFontStretch(FontStretches.Condensed);
       return formattedText;
+    }
+#endif
+
+#if SILVERLIGHT
+    /// <summary>
+    /// Creates the TextBlock.
+    /// </summary>
+    public static TextBlock CreateTextBlock(string text, Typeface typeface, double emSize, Brush brush)
+    {
+      TextBlock textBlock = new TextBlock();
+      textBlock.FontFamily = new FontFamily("Verdana");
+      textBlock.FontSize = emSize;
+      textBlock.Foreground = brush;
+      textBlock.Text = text;
+
+      return textBlock;
     }
 #endif
 

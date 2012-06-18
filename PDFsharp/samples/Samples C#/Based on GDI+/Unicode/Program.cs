@@ -87,7 +87,7 @@ namespace Unicode
       "Therefore it is possible to use PDFsharp without limitations in non open source or commercial projects/products.",
 
       // PDFsharp is 'Made in Germany'
-      "German\n" +
+      "German (deutsch)\n" +
       "PDFsharp ist eine .NET-Bibliothek zum Erzeugen und Verarbeiten von PDF-Dokumenten 'On the Fly'. " +
       "Die Bibliothek ist vollständig in C# geschrieben und basiert ausschließlich auf sicherem, verwaltetem Code. " +
       "PDFsharp bietet zwei leistungsstarke Abstraktionsebenen zur Erstellung und Verarbeitung von PDF-Dokumenten.\n" +
@@ -118,6 +118,33 @@ namespace Unicode
       "для изменения их содержимого, склеивания документов, или разделения на части.\n" +
       "Исходный код PDFsharp библиотеки это Open Source распространяемый под лицензией MIT (http://ru.wikipedia.org/wiki/MIT_License). " +
       "Теоретически она позволяет использовать PDFsharp без ограничений в не open source проектах или коммерческих проектах/продуктах.",
+
+      // French version (by courtesy of Olivier Dalet)
+      "French (Français)\n" +
+      "PDFSharp est une librairie .NET permettant de créer et de traiter des documents PDF 'à la volée'. " +
+      "La librairie est entièrement écrite en C# et exclusivement basée sur du code sûr et géré. " +
+      "PDFSharp fournit deux puissants niveaux d'abstraction pour la création et le traitement des documents PDF.\n" +
+      "Un jeu de classes, modélisées afin de ressembler aux classes du namespace System.Drawing du framework .NET, " +
+      "permet de dessiner du texte, des graphiques et des images. Non seulement ces classes permettent la création du " +
+      "contenu des pages PDF de manière aisée, mais elles peuvent aussi être utilisées pour dessiner dans une fenêtre ou pour l'imprimante.\n" +
+      "De plus, PDFSharp modélise complètement les éléments structurels de PDF. Ainsi, des documents PDF existants peuvent être " +
+      "facilement modifiés, fusionnés ou éclatés.\n"+
+      "Le code source de PDFSharp est Open Source sous licence MIT (http://fr.wikipedia.org/wiki/Licence_MIT). " +
+      "Il est donc possible d'utiliser PDFSharp sans limitation aucune dans des projets ou produits non Open Source ou commerciaux.",
+
+      // Dutch version (translated from English with Google, ĳ was added manually)
+      "Dutch (translated with Google)\n" +
+      "PDFsharp is een. NET bibliotheek voor het maken en verwerken van PDF-documenten 'on the fly'. " +
+      "De bibliotheek is volledig geschreven in C# en uitsluitend op basis van veilige, beheerde code. " +
+      "PDFsharp biedt twee krachtige abstractie niveaus te creëren en verwerken van PDF-documenten.\n" +
+      "Voor het tekenen van tekst, afbeeldingen en beelden is er een set van klassen die vergelĳkbaar zĳn " +
+      "gemodelleerd naar de klassen van de naam van de ruimte System.Drawing. NET framework. Met deze klassen " +
+      "is het niet alleen mogelĳk te maken de inhoud van de PDF-pagina's op een eenvoudige manier, maar ze kunnen " +
+      "ook gebruikt worden op te stellen in een venster of op een printer.\n" +
+      "Daarnaast PDFsharp volledig modellen van de structuur elementen PDF is gebaseerd. Met hen bestaande PDF-documenten " +
+      "kan worden gewĳzigd, samengevoegd of gesplitst met gemak.\n" +
+      "De broncode van PDFsharp is open source onder de MIT-licentie (http://nl.wikipedia.org/wiki/MIT-licentie). " +
+      "Daarom is het mogelĳk om PDFsharp gebruiken zonder beperkingen in niet open source of commerciële projecten / producten.",
 
       // Your language may come here
       "Invitation\n" +

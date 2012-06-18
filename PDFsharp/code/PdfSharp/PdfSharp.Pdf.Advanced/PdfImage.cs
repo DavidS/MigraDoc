@@ -51,7 +51,7 @@ namespace PdfSharp.Pdf.Advanced
   /// <summary>
   /// Represents an image.
   /// </summary>
-  public sealed class PdfImage : PdfXObject
+  public sealed partial class PdfImage : PdfXObject
   {
     /// <summary>
     /// Initializes a new instance of PdfImage from an XImage.
@@ -99,9 +99,10 @@ namespace PdfSharp.Pdf.Advanced
     /// </summary>
     public XImage Image
     {
-      get { return this.image; }
+      get { return image; }
     }
-    XImage image;
+
+    readonly XImage image;
 
     /// <summary>
     /// Returns 'Image'.
@@ -117,7 +118,7 @@ namespace PdfSharp.Pdf.Advanced
     void InitializeJpeg()
     {
       // PDF support JPEG, so there's not much to be done
-      MemoryStream memory = null;
+      MemoryStream memory;
       byte[] imageBits = null;
       int streamLength = 0;
 #if GDI
@@ -148,10 +149,23 @@ namespace PdfSharp.Pdf.Advanced
         memory.Close();
       }
 
-      Stream = new PdfStream(imageBits, this);
-
-      Elements[Keys.Length] = new PdfInteger(streamLength);
-      Elements[Keys.Filter] = new PdfName("/DCTDecode");
+      FlateDecode fd = new FlateDecode();
+      byte[] imageDataCompressed = fd.Encode(imageBits);
+      if (imageDataCompressed.Length < imageBits.Length)
+      {
+        Stream = new PdfStream(imageDataCompressed, this);
+        Elements[Keys.Length] = new PdfInteger(imageDataCompressed.Length);
+        PdfArray arrayFilters = new PdfArray(document);
+        arrayFilters.Elements.Add(new PdfName("/FlateDecode"));
+        arrayFilters.Elements.Add(new PdfName("/DCTDecode"));
+        Elements[Keys.Filter] = arrayFilters;
+      }
+      else
+      {
+        Stream = new PdfStream(imageBits, this);
+        Elements[Keys.Length] = new PdfInteger(streamLength);
+        Elements[Keys.Filter] = new PdfName("/DCTDecode");
+      }
       Elements[Keys.Width] = new PdfInteger(image.PixelWidth);
       Elements[Keys.Height] = new PdfInteger(image.PixelHeight);
       Elements[Keys.BitsPerComponent] = new PdfInteger(8);
@@ -176,7 +190,11 @@ namespace PdfSharp.Pdf.Advanced
 #if WPF
       // TODOWPF
       // WPFTHHO
+#if !SILVERLIGHT
       string pixelFormat = image.wpfImage.Format.ToString();
+#else
+      string pixelFormat = "xxx";
+#endif
       bool isCmyk = image.IsCmyk;
       bool isGrey = pixelFormat == "Gray8";
       if (isCmyk)
@@ -203,34 +221,33 @@ namespace PdfSharp.Pdf.Advanced
     void InitializeNonJpeg()
     {
 #if GDI && !WPF
-      bool hasMask = false;
-      int pPdfVersion = this.Owner.Version;
+      //bool hasMask = false;
       switch (image.gdiImage.PixelFormat)
       {
-        case System.Drawing.Imaging.PixelFormat.Format24bppRgb:
+        case PixelFormat.Format24bppRgb:
           ReadTrueColorMemoryBitmap(3, 8, false);
           break;
 
-        case System.Drawing.Imaging.PixelFormat.Format32bppRgb:
+        case PixelFormat.Format32bppRgb:
           ReadTrueColorMemoryBitmap(4, 8, false);
           break;
 
-        case System.Drawing.Imaging.PixelFormat.Format32bppArgb:
-        case System.Drawing.Imaging.PixelFormat.Format32bppPArgb:
-          hasMask = true;
+        case PixelFormat.Format32bppArgb:
+        case PixelFormat.Format32bppPArgb:
+          //hasMask = true;
           ReadTrueColorMemoryBitmap(3, 8, true);
           break;
 
-        case System.Drawing.Imaging.PixelFormat.Format8bppIndexed:
-          ReadIndexedMemoryBitmap(8, ref hasMask);
+        case PixelFormat.Format8bppIndexed:
+          ReadIndexedMemoryBitmap(8/*, ref hasMask*/);
           break;
 
-        case System.Drawing.Imaging.PixelFormat.Format4bppIndexed:
-          ReadIndexedMemoryBitmap(4, ref hasMask);
+        case PixelFormat.Format4bppIndexed:
+          ReadIndexedMemoryBitmap(4/*, ref hasMask*/);
           break;
 
-        case System.Drawing.Imaging.PixelFormat.Format1bppIndexed:
-          ReadIndexedMemoryBitmap(1, ref hasMask);
+        case PixelFormat.Format1bppIndexed:
+          ReadIndexedMemoryBitmap(1/*, ref hasMask*/);
           break;
 
         default:
@@ -242,8 +259,7 @@ namespace PdfSharp.Pdf.Advanced
 #endif
 #if WPF // && !GDI
       // WPFTHHO: Bitte prüfen, siehe System.Windows.Media.PixelFormats
-      bool hasMask = false;
-      int pPdfVersion = Owner.Version;
+      //bool hasMask = false;
 #if !SILVERLIGHT
       string format = image.wpfImage.Format.ToString();
 #else
@@ -261,51 +277,54 @@ namespace PdfSharp.Pdf.Advanced
 
         case "Bgra32":  //PixelFormat.Format32bppArgb:
           //case PixelFormat.Format32bppPArgb:
-          hasMask = true;
+          //hasMask = true;
           ReadTrueColorMemoryBitmap(3, 8, true);
           break;
 
         case "Bgr32": // StL: neu
-          hasMask = false;
+          //hasMask = false;
           ReadTrueColorMemoryBitmap(3, 8, true);
           break;
 
         case "Pbgra32": // StL: neu
-          hasMask = false;
+          //hasMask = false;
           ReadTrueColorMemoryBitmap(3, 8, true);
           break;
 
         case "Indexed8":  //Format8bppIndexed:
-          ReadIndexedMemoryBitmap(8, ref hasMask);
+        case "Gray8":
+          ReadIndexedMemoryBitmap(8/*, ref hasMask*/);
           break;
 
         case "Indexed4":  //Format4bppIndexed:
-          ReadIndexedMemoryBitmap(4, ref hasMask);
+        case "Gray4":
+          ReadIndexedMemoryBitmap(4/*, ref hasMask*/);
           break;
 
-        case "Indexed2": // WPFTHHO gibt es das auch?
-          ReadIndexedMemoryBitmap(2, ref hasMask);
+        case "Indexed2":
+          ReadIndexedMemoryBitmap(2/*, ref hasMask*/);
           break;
 
         case "Indexed1":  //Format1bppIndexed:
-          ReadIndexedMemoryBitmap(1, ref hasMask);
+        case "BlackWhite":  //Format1bppIndexed:
+          ReadIndexedMemoryBitmap(1/*, ref hasMask*/);
           break;
 
         default:
 #if DEBUGxxx
           image.image.Save("$$$.bmp", ImageFormat.Bmp);
 #endif
-          throw new NotImplementedException("Image format not supported.");
+          throw new NotImplementedException("Image format \"" + format + "\" not supported.");
       }
 #endif
     }
 
-    private int ReadWord(byte[] ab, int offset)
+    private static int ReadWord(byte[] ab, int offset)
     {
-      return (int)ab[offset] + 256 * (int)ab[offset + 1];
+      return ab[offset] + 256 * ab[offset + 1];
     }
 
-    private int ReadDWord(byte[] ab, int offset)
+    private static int ReadDWord(byte[] ab, int offset)
     {
       return ReadWord(ab, offset) + 0x10000 * ReadWord(ab, offset + 2);
     }
@@ -321,7 +340,7 @@ namespace PdfSharp.Pdf.Advanced
 #if DEBUG_
       image.image.Save("$$$.bmp", ImageFormat.Bmp);
 #endif
-      int pdfVersion = this.Owner.Version;
+      int pdfVersion = Owner.Version;
       MemoryStream memory = new MemoryStream();
 #if GDI
       image.gdiImage.Save(memory, ImageFormat.Bmp);
@@ -330,7 +349,7 @@ namespace PdfSharp.Pdf.Advanced
 #if !SILVERLIGHT
       // WPFTHHO: Bitte prüfen
       BmpBitmapEncoder encoder = new BmpBitmapEncoder();
-      encoder.Frames.Add(BitmapFrame.Create(this.image.wpfImage));
+      encoder.Frames.Add(BitmapFrame.Create(image.wpfImage));
       encoder.Save(memory);
 #else
       // AGHACK
@@ -345,8 +364,8 @@ namespace PdfSharp.Pdf.Advanced
         memory.Read(imageBits, 0, streamLength);
         memory.Close();
 
-        int height = this.image.PixelHeight;
-        int width = this.image.PixelWidth;
+        int height = image.PixelHeight;
+        int width = image.PixelWidth;
 
         // TODO: we could define structures for
         //   BITMAPFILEHEADER
@@ -389,8 +408,12 @@ namespace PdfSharp.Pdf.Advanced
           for (int y = 0; y < height; ++y)
           {
             int nOffsetWrite = 3 * (height - 1 - y) * width;
+            int nOffsetWriteAlpha = 0;
             if (hasAlpha)
+            {
               mask.StartLine(y);
+              nOffsetWriteAlpha = (height - 1 - y) * width;
+            }
 
             for (int x = 0; x < width; ++x)
             {
@@ -400,7 +423,7 @@ namespace PdfSharp.Pdf.Advanced
               if (hasAlpha)
               {
                 mask.AddPel(imageBits[nFileOffset + nOffsetRead + 3]);
-                alphaMask[nOffsetWrite / 3] = imageBits[nFileOffset + nOffsetRead + 3];
+                alphaMask[nOffsetWriteAlpha] = imageBits[nFileOffset + nOffsetRead + 3];
                 if (!hasMask || !hasAlphaMask)
                 {
                   if (imageBits[nFileOffset + nOffsetRead + 3] != 255)
@@ -410,6 +433,7 @@ namespace PdfSharp.Pdf.Advanced
                       hasAlphaMask = true;
                   }
                 }
+                ++nOffsetWriteAlpha;
               }
               nOffsetRead += hasAlpha ? 4 : components;
               nOffsetWrite += 3;
@@ -429,11 +453,11 @@ namespace PdfSharp.Pdf.Advanced
           // monochrome mask is either sufficient or
           // provided for compatibility with older reader versions
           byte[] maskDataCompressed = fd.Encode(mask.MaskData);
-          PdfDictionary pdfMask = new PdfDictionary(this.document);
+          PdfDictionary pdfMask = new PdfDictionary(document);
           pdfMask.Elements.SetName(Keys.Type, "/XObject");
           pdfMask.Elements.SetName(Keys.Subtype, "/Image");
 
-          this.Owner.irefTable.Add(pdfMask);
+          Owner.irefTable.Add(pdfMask);
           pdfMask.Stream = new PdfStream(maskDataCompressed, pdfMask);
           pdfMask.Elements[Keys.Length] = new PdfInteger(maskDataCompressed.Length);
           pdfMask.Elements[Keys.Filter] = new PdfName("/FlateDecode");
@@ -447,11 +471,11 @@ namespace PdfSharp.Pdf.Advanced
         {
           // The image provides an alpha mask (requires Arcrobat 5.0 or higher)
           byte[] alphaMaskCompressed = fd.Encode(alphaMask);
-          PdfDictionary smask = new PdfDictionary(this.document);
+          PdfDictionary smask = new PdfDictionary(document);
           smask.Elements.SetName(Keys.Type, "/XObject");
           smask.Elements.SetName(Keys.Subtype, "/Image");
 
-          this.Owner.irefTable.Add(smask);
+          Owner.irefTable.Add(smask);
           smask.Stream = new PdfStream(alphaMaskCompressed, smask);
           smask.Elements[Keys.Length] = new PdfInteger(alphaMaskCompressed.Length);
           smask.Elements[Keys.Filter] = new PdfName("/FlateDecode");
@@ -493,12 +517,12 @@ namespace PdfSharp.Pdf.Advanced
         } BITMAPINFOHEADER, *PBITMAPINFOHEADER; 
     */
 
-    private void ReadIndexedMemoryBitmap(int bits, ref bool hasAlpha)
+    private void ReadIndexedMemoryBitmap(int bits/*, ref bool hasAlpha*/)
     {
 #if DEBUG_
       image.image.Save("$$$.bmp", ImageFormat.Bmp);
 #endif
-      int pdfVersion = this.Owner.Version;
+      int pdfVersion = Owner.Version;
       int firstMaskColor = -1, lastMaskColor = -1;
       bool segmentedColorMask = false;
 
@@ -510,7 +534,7 @@ namespace PdfSharp.Pdf.Advanced
 #if !SILVERLIGHT
       // WPFTHHO: StL: keine Ahnung ob das so stimmt.
       BmpBitmapEncoder encoder = new BmpBitmapEncoder();
-      encoder.Frames.Add(BitmapFrame.Create(this.image.wpfImage));
+      encoder.Frames.Add(BitmapFrame.Create(image.wpfImage));
       encoder.Save(memory);
 #else
       // AGHACK
@@ -525,15 +549,16 @@ namespace PdfSharp.Pdf.Advanced
         memory.Read(imageBits, 0, streamLength);
         memory.Close();
 
-        int height = this.image.PixelHeight;
-        int width = this.image.PixelWidth;
+        int height = image.PixelHeight;
+        int width = image.PixelWidth;
 
         if (ReadWord(imageBits, 0) != 0x4d42 || // "BM"
           ReadDWord(imageBits, 2) != streamLength ||
           ReadDWord(imageBits, 14) != 40 || // sizeof BITMAPINFOHEADER
 #if WPF
-          // TODOWPF: bug with height and width
-          false)
+          // TODOWPF: bug with height and width??? With which files???
+          ReadDWord(imageBits, 18) != width ||
+          ReadDWord(imageBits, 22) != height)
 #else
           ReadDWord(imageBits, 18) != width ||
           ReadDWord(imageBits, 22) != height)
@@ -570,12 +595,18 @@ namespace PdfSharp.Pdf.Advanced
 
         MonochromeMask mask = new MonochromeMask(width, height);
 
+        bool isGray = bits == 8 && (paletteColors == 256 || paletteColors == 0);
+        int isBitonal = 0; // 0: false; >0: true; <0: true (inverted)
         byte[] paletteData = new byte[3 * paletteColors];
         for (int color = 0; color < paletteColors; ++color)
         {
           paletteData[3 * color] = imageBits[bytesColorPaletteOffset + 4 * color + 2];
           paletteData[3 * color + 1] = imageBits[bytesColorPaletteOffset + 4 * color + 1];
           paletteData[3 * color + 2] = imageBits[bytesColorPaletteOffset + 4 * color + 0];
+          if (isGray)
+            isGray = paletteData[3 * color] == paletteData[3 * color + 1] &&
+              paletteData[3 * color] == paletteData[3 * color + 2];
+
           if (imageBits[bytesColorPaletteOffset + 4 * color + 3] < 128)
           {
             // We treat this as transparency:
@@ -586,9 +617,32 @@ namespace PdfSharp.Pdf.Advanced
             if (lastMaskColor != color)
               segmentedColorMask = true;
           }
-          else
+          //else
+          //{
+          //  // We treat this as opacity:
+          //}
+        }
+
+        if (bits == 1)
+        {
+          if (paletteColors == 0)
+            isBitonal = 1;
+          if (paletteColors == 2)
           {
-            // We treat this as opacity:
+            if (paletteData[0] == 0 &&
+              paletteData[1] == 0 &&
+              paletteData[2] == 0 &&
+              paletteData[3] == 255 &&
+              paletteData[4] == 255 &&
+              paletteData[5] == 255)
+              isBitonal = 1; // Black on white
+            if (paletteData[5] == 0 &&
+              paletteData[4] == 0 &&
+              paletteData[3] == 0 &&
+              paletteData[2] == 255 &&
+              paletteData[1] == 255 &&
+              paletteData[0] == 255)
+              isBitonal = -1; // White on black
           }
         }
 
@@ -597,70 +651,131 @@ namespace PdfSharp.Pdf.Advanced
         // { ... }
 
         FlateDecode fd = new FlateDecode();
-        PdfDictionary colorPalette = new PdfDictionary(this.document);
-        // TODO: decide at run-time if compression makes sense
-#if false
-        // Create uncompressed color palette:
-        colorPalette.CreateStream(paletteData);
-        colorPalette.Elements[Keys.Length] = new PdfInteger(paletteData.Length);
-#else
-        // Create compressed color palette:
-        byte[] packedPaletteData = fd.Encode(paletteData);
-        colorPalette.CreateStream(packedPaletteData);
-        colorPalette.Elements[Keys.Length] = new PdfInteger(packedPaletteData.Length);
-        colorPalette.Elements[Keys.Filter] = new PdfName("/FlateDecode");
-#endif
-        this.Owner.irefTable.Add(colorPalette);
-
-        byte[] imageData = new byte[1 * width * height];
-
-        int bytesOffsetRead = 0;
-        if (bits == 8 || bits == 4 || bits == 1)
+        PdfDictionary colorPalette = null;
+        if (isBitonal == 0 && !isGray)
         {
-          int bytesPerLine = (width * bits + 7) / 8;
-          for (int y = 0; y < height; ++y)
+          colorPalette = new PdfDictionary(this.document);
+          byte[] packedPaletteData = paletteData.Length >= 48 ? fd.Encode(paletteData) : null; // don't compress small palettes
+          if (packedPaletteData != null && packedPaletteData.Length + 20 < paletteData.Length) // +20: compensate for the overhead (estimated value)
           {
-            mask.StartLine(y);
-            int bytesOffsetWrite = (height - 1 - y) * ((width * bits + 7) / 8);
-            for (int x = 0; x < bytesPerLine; ++x)
+            // Create compressed color palette:
+            colorPalette.CreateStream(packedPaletteData);
+            colorPalette.Elements[Keys.Length] = new PdfInteger(packedPaletteData.Length);
+            colorPalette.Elements[Keys.Filter] = new PdfName("/FlateDecode");
+          }
+          else
+          {
+            // Create uncompressed color palette:
+            colorPalette.CreateStream(paletteData);
+            colorPalette.Elements[Keys.Length] = new PdfInteger(paletteData.Length);
+          }
+          Owner.irefTable.Add(colorPalette);
+        }
+
+        bool isFaxEncoding = false;
+        byte[] imageData = new byte[((width * bits + 7) / 8) * height];
+        byte[] imageDataFax = null;
+        int k = 0;
+
+
+        if (bits == 1)
+        {
+          // TODO: flag/option?
+          // We try Group 3 1D and Group 4 (2D) encoding here and keep the smaller byte array.
+          //byte[] temp = new byte[imageData.Length];
+          //int ccittSize = DoFaxEncoding(ref temp, imageBits, (uint)bytesFileOffset, (uint)width, (uint)height);
+
+          // It seems that Group 3 2D encoding never beats both other encodings, therefore we don't call it here.
+          //byte[] temp2D = new byte[imageData.Length];
+          //uint dpiY = (uint)image.VerticalResolution;
+          //uint kTmp = 0;
+          //int ccittSize2D = DoFaxEncoding2D((uint)bytesFileOffset, ref temp2D, imageBits, (uint)width, (uint)height, dpiY, out kTmp);
+          //k = (int) kTmp;
+
+          byte[] tempG4 = new byte[imageData.Length];
+          int ccittSizeG4 = DoFaxEncodingGroup4(ref tempG4, imageBits, (uint)bytesFileOffset, (uint)width, (uint)height);
+
+          isFaxEncoding = /*ccittSize > 0 ||*/ ccittSizeG4 > 0;
+          if (isFaxEncoding)
+          {
+            //if (ccittSize == 0)
+            //  ccittSize = 0x7fffffff;
+            if (ccittSizeG4 == 0)
+              ccittSizeG4 = 0x7fffffff;
+            //if (ccittSize <= ccittSizeG4)
+            //{
+            //  Array.Resize(ref temp, ccittSize);
+            //  imageDataFax = temp;
+            //  k = 0;
+            //}
+            //else
             {
-              imageData[bytesOffsetWrite] = imageBits[bytesFileOffset + bytesOffsetRead];
-              if (firstMaskColor != -1)
-              {
-                int n = imageBits[bytesFileOffset + bytesOffsetRead];
-                if (bits == 8)
-                {
-                  // TODO???: segmentedColorMask == true => falsche Maske NYI
-                  mask.AddPel((n >= firstMaskColor) && (n <= lastMaskColor));
-                }
-                else if (bits == 4)
-                {
-                  // TODO???: segmentedColorMask == true => falsche Maske NYI
-                  int n1 = (n & 0xf0) / 16;
-                  int n2 = (n & 0x0f);
-                  mask.AddPel((n1 >= firstMaskColor) && (n1 <= lastMaskColor));
-                  mask.AddPel((n2 >= firstMaskColor) && (n2 <= lastMaskColor));
-                }
-                else if (bits == 1)
-                {
-                  // TODO???: segmentedColorMask == true => bad mask NYI
-                  for (int bit = 1; bit <= 8; ++bit)
-                  {
-                    int n1 = (n & 0x80) / 128;
-                    mask.AddPel((n1 >= firstMaskColor) && (n1 <= lastMaskColor));
-                    n *= 2;
-                  }
-                }
-              }
-              bytesOffsetRead += 1;
-              bytesOffsetWrite += 1;
+              Array.Resize(ref tempG4, ccittSizeG4);
+              imageDataFax = tempG4;
+              k = -1;
             }
-            bytesOffsetRead = 4 * ((bytesOffsetRead + 3) / 4); // Align to 32 bit boundary
           }
         }
-        else
+
+        //if (!isFaxEncoding)
         {
-          throw new NotImplementedException("ReadIndexedMemoryBitmap: unsupported format #3");
+          int bytesOffsetRead = 0;
+          if (bits == 8 || bits == 4 || bits == 1)
+          {
+            int bytesPerLine = (width * bits + 7) / 8;
+            for (int y = 0; y < height; ++y)
+            {
+              mask.StartLine(y);
+              int bytesOffsetWrite = (height - 1 - y) * ((width * bits + 7) / 8);
+              for (int x = 0; x < bytesPerLine; ++x)
+              {
+                if (isGray)
+                {
+                  // Lookup the gray value from the palette:
+                  imageData[bytesOffsetWrite] = paletteData[3 * imageBits[bytesFileOffset + bytesOffsetRead]];
+                }
+                else
+                {
+                  // Store the palette index:
+                  imageData[bytesOffsetWrite] = imageBits[bytesFileOffset + bytesOffsetRead];
+                }
+                if (firstMaskColor != -1)
+                {
+                  int n = imageBits[bytesFileOffset + bytesOffsetRead];
+                  if (bits == 8)
+                  {
+                    // TODO???: segmentedColorMask == true => bad mask NYI
+                    mask.AddPel((n >= firstMaskColor) && (n <= lastMaskColor));
+                  }
+                  else if (bits == 4)
+                  {
+                    // TODO???: segmentedColorMask == true => bad mask NYI
+                    int n1 = (n & 0xf0) / 16;
+                    int n2 = (n & 0x0f);
+                    mask.AddPel((n1 >= firstMaskColor) && (n1 <= lastMaskColor));
+                    mask.AddPel((n2 >= firstMaskColor) && (n2 <= lastMaskColor));
+                  }
+                  else if (bits == 1)
+                  {
+                    // TODO???: segmentedColorMask == true => bad mask NYI
+                    for (int bit = 1; bit <= 8; ++bit)
+                    {
+                      int n1 = (n & 0x80) / 128;
+                      mask.AddPel((n1 >= firstMaskColor) && (n1 <= lastMaskColor));
+                      n *= 2;
+                    }
+                  }
+                }
+                bytesOffsetRead += 1;
+                bytesOffsetWrite += 1;
+              }
+              bytesOffsetRead = 4 * ((bytesOffsetRead + 3) / 4); // Align to 32 bit boundary
+            }
+          }
+          else
+          {
+            throw new NotImplementedException("ReadIndexedMemoryBitmap: unsupported format #3");
+          }
         }
 
         if (firstMaskColor != -1 &&
@@ -669,7 +784,7 @@ namespace PdfSharp.Pdf.Advanced
           // Color mask requires Reader 4.0 or higher:
           if (!segmentedColorMask && pdfVersion >= 13)
           {
-            PdfArray array = new PdfArray(this.document);
+            PdfArray array = new PdfArray(document);
             array.Elements.Add(new PdfInteger(firstMaskColor));
             array.Elements.Add(new PdfInteger(lastMaskColor));
             Elements[Keys.Mask] = array;
@@ -678,7 +793,7 @@ namespace PdfSharp.Pdf.Advanced
           {
             // Monochrome mask
             byte[] maskDataCompressed = fd.Encode(mask.MaskData);
-            PdfDictionary pdfMask = new PdfDictionary(this.document);
+            PdfDictionary pdfMask = new PdfDictionary(document);
             pdfMask.Elements.SetName(Keys.Type, "/XObject");
             pdfMask.Elements.SetName(Keys.Subtype, "/Image");
 
@@ -695,20 +810,93 @@ namespace PdfSharp.Pdf.Advanced
         }
 
         byte[] imageDataCompressed = fd.Encode(imageData);
+        byte[] imageDataFaxCompressed = isFaxEncoding ? fd.Encode(imageDataFax) : null;
 
-        Stream = new PdfStream(imageDataCompressed, this);
-        Elements[Keys.Length] = new PdfInteger(imageDataCompressed.Length);
-        Elements[Keys.Filter] = new PdfName("/FlateDecode");
+        bool usesCcittEncoding = false;
+        if (isFaxEncoding &&
+          (imageDataFax.Length < imageDataCompressed.Length ||
+          imageDataFaxCompressed.Length < imageDataCompressed.Length))
+        {
+          // /CCITTFaxDecode creates the smaller file (with or without /FlateDecode):
+          usesCcittEncoding = true;
+
+          if (imageDataFax.Length < imageDataCompressed.Length)
+          {
+            Stream = new PdfStream(imageDataFax, this);
+            Elements[Keys.Length] = new PdfInteger(imageDataFax.Length);
+            Elements[Keys.Filter] = new PdfName("/CCITTFaxDecode");
+            //PdfArray array2 = new PdfArray(this.document);
+            PdfDictionary dictionary = new PdfDictionary();
+            if (k != 0)
+              dictionary.Elements.Add("/K", new PdfInteger(k));
+            if (isBitonal < 0)
+              dictionary.Elements.Add("/BlackIs1", new PdfBoolean(true));
+            dictionary.Elements.Add("/EndOfBlock", new PdfBoolean(false));
+            dictionary.Elements.Add("/Columns", new PdfInteger(width));
+            dictionary.Elements.Add("/Rows", new PdfInteger(height));
+            //array2.Elements.Add(dictionary);
+            Elements[Keys.DecodeParms] = dictionary; // array2;
+          }
+          else
+          {
+            Stream = new PdfStream(imageDataFaxCompressed, this);
+            Elements[Keys.Length] = new PdfInteger(imageDataFaxCompressed.Length);
+            PdfArray arrayFilters = new PdfArray(document);
+            arrayFilters.Elements.Add(new PdfName("/FlateDecode"));
+            arrayFilters.Elements.Add(new PdfName("/CCITTFaxDecode"));
+            Elements[Keys.Filter] = arrayFilters;
+            PdfArray arrayDecodeParms = new PdfArray(document);
+
+            PdfDictionary dictFlateDecodeParms = new PdfDictionary();
+            //dictFlateDecodeParms.Elements.Add("/Columns", new PdfInteger(1));
+
+            PdfDictionary dictCcittFaxDecodeParms = new PdfDictionary();
+            if (k != 0)
+              dictCcittFaxDecodeParms.Elements.Add("/K", new PdfInteger(k));
+            if (isBitonal < 0)
+              dictCcittFaxDecodeParms.Elements.Add("/BlackIs1", new PdfBoolean(true));
+            dictCcittFaxDecodeParms.Elements.Add("/EndOfBlock", new PdfBoolean(false));
+            dictCcittFaxDecodeParms.Elements.Add("/Columns", new PdfInteger(width));
+            dictCcittFaxDecodeParms.Elements.Add("/Rows", new PdfInteger(height));
+
+            arrayDecodeParms.Elements.Add(dictFlateDecodeParms); // How to add the "null object"?
+            arrayDecodeParms.Elements.Add(dictCcittFaxDecodeParms);
+            Elements[Keys.DecodeParms] = arrayDecodeParms;
+          }
+        }
+        else
+        {
+          // /FlateDecode creates the smaller file (or no monochrome bitmap):
+          Stream = new PdfStream(imageDataCompressed, this);
+          Elements[Keys.Length] = new PdfInteger(imageDataCompressed.Length);
+          Elements[Keys.Filter] = new PdfName("/FlateDecode");
+        }
+
         Elements[Keys.Width] = new PdfInteger(width);
         Elements[Keys.Height] = new PdfInteger(height);
         Elements[Keys.BitsPerComponent] = new PdfInteger(bits);
-        PdfArray array2 = new PdfArray(this.document);
-        array2.Elements.Add(new PdfName("/Indexed"));
         // TODO: CMYK
-        array2.Elements.Add(new PdfName("/DeviceRGB"));
-        array2.Elements.Add(new PdfInteger(paletteColors - 1));
-        array2.Elements.Add(colorPalette.Reference);
-        Elements[Keys.ColorSpace] = array2;
+
+        // CCITT encoding: we need color palette for isBitonal == 0
+        // FlateDecode: we need color palette for isBitonal <= 0 unless we have grayscales
+        if ((usesCcittEncoding && isBitonal == 0) ||
+          (!usesCcittEncoding && isBitonal <= 0  && !isGray))
+        {
+          PdfArray arrayColorSpace = new PdfArray(document);
+          arrayColorSpace.Elements.Add(new PdfName("/Indexed"));
+          arrayColorSpace.Elements.Add(new PdfName("/DeviceRGB"));
+          arrayColorSpace.Elements.Add(new PdfInteger(paletteColors - 1));
+          // ReSharper disable PossibleNullReferenceException
+          arrayColorSpace.Elements.Add(colorPalette.Reference);
+          // ReSharper restore PossibleNullReferenceException
+          Elements[Keys.ColorSpace] = arrayColorSpace;
+        }
+        else
+        {
+          Elements[Keys.ColorSpace] = new PdfName("/DeviceGray");
+        }
+        if (image.Interpolate)
+          Elements[Keys.Interpolate] = PdfBoolean.True;
       }
     }
 
@@ -901,8 +1089,8 @@ namespace PdfSharp.Pdf.Advanced
   /// </summary>
   class MonochromeMask
   {
-    private int sizeX;
-    private int sizeY;
+    private readonly int sizeX;
+    private readonly int sizeY;
     private int writeOffset;
     private int byteBuffer;
     private int bitsWritten;
@@ -914,7 +1102,7 @@ namespace PdfSharp.Pdf.Advanced
     {
       get { return maskData; }
     }
-    private byte[] maskData = null;
+    private readonly byte[] maskData;
 
     /// <summary>
     /// Creates a bitmap mask.
@@ -948,9 +1136,9 @@ namespace PdfSharp.Pdf.Advanced
       {
         // Mask: 0: opaque, 1: transparent (default mapping)
         if (isTransparent)
-          byteBuffer = byteBuffer * 2 + 1;
+          byteBuffer = (byteBuffer << 1) + 1;
         else
-          byteBuffer = byteBuffer * 2;
+          byteBuffer = byteBuffer << 1;
         ++bitsWritten;
         if ((bitsWritten & 7) == 0)
         {
@@ -961,8 +1149,7 @@ namespace PdfSharp.Pdf.Advanced
         else if (bitsWritten == sizeX)
         {
           int n = 8 - (bitsWritten & 7);
-          for (int i = 1; i <= n; ++i)
-            byteBuffer *= 2;
+          byteBuffer = byteBuffer << n;
           maskData[writeOffset] = (byte)byteBuffer;
         }
       }

@@ -41,7 +41,7 @@ namespace PdfSharp.Drawing
     GDI = 1,
 
     /// <summary>
-    /// Renders using WPF.
+    /// Renders using WPF (including Silverlight).
     /// </summary>
     WPF = 2,
   }

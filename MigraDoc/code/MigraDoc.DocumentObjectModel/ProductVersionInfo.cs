@@ -55,8 +55,8 @@ namespace MigraDoc
 
     // Build = days since 2001-07-04  -  change values ONLY here
     public const string VersionMajor = "1";
-    public const string VersionMinor = "2";
-    public const string VersionBuild = "2961";
+    public const string VersionMinor = "31";
+    public const string VersionBuild = "3066";
     public const string VersionPatch = "0";
 
 #if DEBUG

@@ -281,6 +281,7 @@ namespace PdfSharp.Drawing
           case "Indexed1":
           case "Indexed4":
           case "Indexed8":
+          case "Gray8":
             this.format = XImageFormat.Gif;
             break;
 
@@ -751,16 +752,20 @@ namespace PdfSharp.Drawing
     }
     XImageFormat format;
 
-#if WPF && !SILVERLIGHT
+#if WPF
     /// <summary>
     /// Gets a value indicating whether this image is JPEG.
     /// </summary>
     /// <value><c>true</c> if this image is JPEG; otherwise, <c>false</c>.</value>
     public virtual bool IsJpeg
     {
+#if !SILVERLIGHT
       //get { if (!isJpeg.HasValue) InitializeGdiHelper(); return isJpeg.HasValue ? isJpeg.Value : false; }
       get { if (!isJpeg.HasValue) InitializeJpegQuickTest(); return isJpeg.HasValue ? isJpeg.Value : false; }
       //set { isJpeg = value; }
+#else
+      get { return false; } // AGHACK
+#endif
     }
     private bool? isJpeg;
 
@@ -770,11 +775,16 @@ namespace PdfSharp.Drawing
     /// <value><c>true</c> if this image is cmyk; otherwise, <c>false</c>.</value>
     public virtual bool IsCmyk
     {
+#if !SILVERLIGHT
       get { if (!isCmyk.HasValue) InitializeGdiHelper(); return isCmyk.HasValue ? isCmyk.Value : false; }
       //set { isCmyk = value; }
+#else
+      get { return false; } // AGHACK
+#endif
     }
     private bool? isCmyk;
 
+#if !SILVERLIGHT
     /// <summary>
     /// Gets the JPEG memory stream (if IsJpeg returns true).
     /// </summary>
@@ -825,6 +835,7 @@ namespace PdfSharp.Drawing
       }
     }
 #endif    
+#endif    
 
 
 #if DEBUG_
@@ -849,7 +860,7 @@ namespace PdfSharp.Drawing
 #if GDI
     internal Image gdiImage;
 #endif
-#if WPF && !SILVERLIGHT
+#if WPF
     internal BitmapSource wpfImage;
 #endif
 

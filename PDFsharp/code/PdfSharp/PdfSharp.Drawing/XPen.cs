@@ -358,10 +358,10 @@ namespace PdfSharp.Drawing
           }
         }
       }
-      return this.wpfPen;
 #else
-      return null;
+      this.wpfPen = new System.Windows.Media.Pen(new SolidColorBrush(this.color.ToWpfColor()), this.width);
 #endif
+      return this.wpfPen;
     }
 #endif
 
@@ -370,7 +370,7 @@ namespace PdfSharp.Drawing
 #if GDI
     System.Drawing.Pen gdiPen;
 #endif
-#if WPF && !SILVERLIGHT
+#if WPF //&& !SILVERLIGHT
     System.Windows.Media.Pen wpfPen;
 #endif
   }

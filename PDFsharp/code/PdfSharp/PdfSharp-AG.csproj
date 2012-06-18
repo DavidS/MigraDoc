@@ -52,22 +52,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="!internal\Directives.cs" />
+    <Compile Include="AgInternals\AgExtensions.cs" />
     <Compile Include="AgInternals\DrawingVisual.cs" />
     <Compile Include="AgInternals\DrawingContext.cs" />
     <Compile Include="AgInternals\AgHacks.cs" />
-    <Compile Include="PdfSharp.AcroForms\enums\PdfAcroFieldFlags.cs" />
-    <Compile Include="PdfSharp.AcroForms\PdfAcroField.cs" />
-    <Compile Include="PdfSharp.AcroForms\PdfAcroForm.cs" />
-    <Compile Include="PdfSharp.AcroForms\PdfButtonField.cs" />
-    <Compile Include="PdfSharp.AcroForms\PdfCheckBoxField.cs" />
-    <Compile Include="PdfSharp.AcroForms\PdfChoiseField.cs" />
-    <Compile Include="PdfSharp.AcroForms\PdfComboBoxField.cs" />
-    <Compile Include="PdfSharp.AcroForms\PdfGenericField.cs" />
-    <Compile Include="PdfSharp.AcroForms\PdfListBoxField.cs" />
-    <Compile Include="PdfSharp.AcroForms\PdfPushButtonField.cs" />
-    <Compile Include="PdfSharp.AcroForms\PdfRadioButtonField.cs" />
-    <Compile Include="PdfSharp.AcroForms\PdfSignatureField.cs" />
-    <Compile Include="PdfSharp.AcroForms\PdfTextField.cs" />
+    <Compile Include="AgInternals\Typeface.cs" />
     <Compile Include="PdfSharp.Drawing.BarCodes\BarCode.cs" />
     <Compile Include="PdfSharp.Drawing.BarCodes\BarCodeRenderInfo.cs" />
     <Compile Include="PdfSharp.Drawing.BarCodes\BcgSR.cs" />
@@ -183,6 +172,19 @@
     <Compile Include="PdfSharp.Internal\DoubleUtil.cs" />
     <Compile Include="PdfSharp.Internal\NativeMethods.cs" />
     <Compile Include="PdfSharp.Internal\TokenizerHelper.cs" />
+    <Compile Include="PdfSharp.Pdf.AcroForms\enums\PdfAcroFieldFlags.cs" />
+    <Compile Include="PdfSharp.Pdf.AcroForms\PdfAcroField.cs" />
+    <Compile Include="PdfSharp.Pdf.AcroForms\PdfAcroForm.cs" />
+    <Compile Include="PdfSharp.Pdf.AcroForms\PdfButtonField.cs" />
+    <Compile Include="PdfSharp.Pdf.AcroForms\PdfCheckBoxField.cs" />
+    <Compile Include="PdfSharp.Pdf.AcroForms\PdfChoiceField.cs" />
+    <Compile Include="PdfSharp.Pdf.AcroForms\PdfComboBoxField.cs" />
+    <Compile Include="PdfSharp.Pdf.AcroForms\PdfGenericField.cs" />
+    <Compile Include="PdfSharp.Pdf.AcroForms\PdfListBoxField.cs" />
+    <Compile Include="PdfSharp.Pdf.AcroForms\PdfPushButtonField.cs" />
+    <Compile Include="PdfSharp.Pdf.AcroForms\PdfRadioButtonField.cs" />
+    <Compile Include="PdfSharp.Pdf.AcroForms\PdfSignatureField.cs" />
+    <Compile Include="PdfSharp.Pdf.AcroForms\PdfTextField.cs" />
     <Compile Include="PdfSharp.Pdf.Actions\enums\PdfNamedActionNames.cs" />
     <Compile Include="PdfSharp.Pdf.Actions\PdfAction.cs" />
     <Compile Include="PdfSharp.Pdf.Advanced\IContentStream.cs" />
@@ -358,7 +360,6 @@
   <ItemGroup>
     <Folder Include="PdfSharp.Drawing.Wpf\" />
     <Folder Include="PdfSharp.Fonts.TrueType\enums\" />
-    <Folder Include="PdfSharp.Pdf.AcroForms\enums\" />
     <Folder Include="PdfSharpPdf.AcroForms\enums\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight\v3.0\Microsoft.Silverlight.CSharp.targets" Condition="" />

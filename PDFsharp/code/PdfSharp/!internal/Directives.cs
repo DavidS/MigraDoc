@@ -74,6 +74,9 @@
 // PDFsharp based on Windows Presentation Foundation
 #elif SILVERLIGHT
 // PDFsharp based on Silverlight
+#if !WPF
+#error 'SILVERLIGHT' must be defined together with 'WPF'
+#endif
 #else
 #error Either 'GDI', 'WPF' or 'SILVERLIGHT' must be defined
 #endif

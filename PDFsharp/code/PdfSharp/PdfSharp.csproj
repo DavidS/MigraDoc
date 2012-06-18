@@ -165,6 +165,7 @@
     <Compile Include="PdfSharp.Pdf.Advanced\IContentStream.cs" />
     <Compile Include="PdfSharp.Pdf.Advanced\PdfDictionaryWithContentStream.cs" />
     <Compile Include="PdfSharp.Pdf.Advanced\PdfGroupAttributes.cs" />
+    <Compile Include="PdfSharp.Pdf.Advanced\PdfImage.FaxEncode.cs" />
     <Compile Include="PdfSharp.Pdf.Advanced\PdfObjectInternals.cs" />
     <Compile Include="PdfSharp.Pdf.Advanced\PdfSoftMask.cs" />
     <Compile Include="PdfSharp.Pdf.Advanced\PdfTilingPattern.cs" />
