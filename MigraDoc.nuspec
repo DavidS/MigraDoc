@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>PDFsharp-MigraDoc-GDI-dasz</id>
+    <version>1.32.3879.0</version>
+    <authors>empira Software GmbH</authors>
+    <licenseUrl>http://www.pdfsharp.net/MigraDoc_License.ashx</licenseUrl>
+    <projectUrl>https://github.com/DavidS/MigraDoc</projectUrl>
+    <iconUrl>http://www.pdfsharp.net/resources/MigraDoc-Logo-32x32.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+	<summary>The popular PDF library with a few fixes.</summary>
+    <description>This version is modified to not fix a few bugs by dasz.at. Original description: MigraDoc Foundation - the Open Source .NET library that easily creates documents based on an object model with paragraphs, tables, styles, etc. and renders them into PDF or RTF. This is PDFsharp and MigraDoc based on GDI+.</description>
+    <releaseNotes>
+	* Fix RTF ChartRenderer to not put temp images to the screen
+	* Increase bitmap resolution for RTF ChartRenderer to 300 dpi
+	* Accelerate rendering of Tables
+	* MDDL parser now emits a proper error when reaching an unexpected EOF
+	</releaseNotes>
+    <copyright>Copyright 2012</copyright>
+    <tags>PDFsharp MigraDoc PDF RTF document creation</tags>
+  </metadata>
+  <files>
+    <file src="MigraDoc\code\TestFormsApplication\bin\Release\de\MigraDoc.DocumentObjectModel.resources.dll" target="lib\net35\de" />
+    <file src="MigraDoc\code\TestFormsApplication\bin\Release\de\MigraDoc.Rendering.resources.dll" target="lib\net35\de" />
+    <file src="MigraDoc\code\TestFormsApplication\bin\Release\de\PdfSharp.Charting.resources.dll" target="lib\net35\de" />
+    <file src="MigraDoc\code\TestFormsApplication\bin\Release\de\PdfSharp.resources.dll" target="lib\net35\de" />
+    <file src="MigraDoc\code\TestFormsApplication\bin\Release\MigraDoc.DocumentObjectModel.dll" target="lib\net35" />
+    <file src="MigraDoc\code\TestFormsApplication\bin\Release\MigraDoc.Rendering.dll" target="lib\net35" />
+    <file src="MigraDoc\code\TestFormsApplication\bin\Release\MigraDoc.RtfRendering.dll" target="lib\net3" />
+    <file src="MigraDoc\code\TestFormsApplication\bin\Release\PdfSharp.Charting.dll" target="lib\net35" />
+    <file src="MigraDoc\code\TestFormsApplication\bin\Release\PdfSharp.dll" target="lib\net35" />
+  </files>
+</package>
