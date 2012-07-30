@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>PDFsharp-MigraDoc-GDI-dasz</id>
-    <version>1.32.3880.0</version>
+    <version>1.32.3881.0</version>
     <authors>empira Software GmbH</authors>
     <licenseUrl>http://www.pdfsharp.net/MigraDoc_License.ashx</licenseUrl>
     <projectUrl>https://github.com/DavidS/MigraDoc</projectUrl>
@@ -15,6 +15,7 @@
 	* Implement ListType.None
 	* Implement loading of FontData from extracted resources
 	* Implement small utility to create extracted font metrics
+	* Do not use default HWnd since that doesn't work on head-less systems
 	</releaseNotes>
     <copyright>Copyright 2012</copyright>
     <tags>PDFsharp MigraDoc PDF RTF document creation</tags>
