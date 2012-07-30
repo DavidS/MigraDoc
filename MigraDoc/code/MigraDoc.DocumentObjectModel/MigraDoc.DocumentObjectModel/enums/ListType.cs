@@ -44,6 +44,7 @@ namespace MigraDoc.DocumentObjectModel
     BulletList3,
     NumberList1,
     NumberList2,
-    NumberList3
+    NumberList3,
+    None
   }
 }

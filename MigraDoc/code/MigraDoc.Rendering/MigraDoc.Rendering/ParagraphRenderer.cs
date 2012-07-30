@@ -1288,6 +1288,9 @@ namespace MigraDoc.Rendering
 
           switch (listInfo.ListType)
           {
+            case ListType.None:
+                return false;
+
             case ListType.BulletList1:
               symbol = "·";
               font = new XFont("Symbol", size, style);
