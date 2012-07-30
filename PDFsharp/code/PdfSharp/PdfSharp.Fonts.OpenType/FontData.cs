@@ -160,14 +160,16 @@ namespace PdfSharp.Fonts.OpenType
       //}
       if (this.data == null)
       {
-        var name = string.Format("PdfSharp.FontHacks.{0}{1}{2}.fontdat",
+        var assembly = FontDataConfig.ResourceAssembly;
+        var name = string.Format("{0}.FontHacks.{1}{2}{3}.fontdat",
+            assembly.GetName().Name,
             font.Name,
             font.Bold ? ".Bold" : string.Empty,
             font.Italic ? ".Italic" : string.Empty);
-        if (FontDataConfig.ResourceAssembly != null && new List<string>(FontDataConfig.ResourceAssembly.GetManifestResourceNames()).Contains(name))
+        if (assembly != null && new List<string>(assembly.GetManifestResourceNames()).Contains(name))
         {
           System.Diagnostics.Debug.WriteLine("*** Reading fontdata from Resource");
-          using (var s = FontDataConfig.ResourceAssembly.GetManifestResourceStream(name))
+          using (var s = assembly.GetManifestResourceStream(name))
           {
             this.data = new byte[s.Length];
             s.Read(this.data, 0, (int)s.Length);
