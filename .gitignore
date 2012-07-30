@@ -3,6 +3,7 @@ bin
 *.csproj.user
 *.suo
 *.nupkg
-MigraDoc/code/BuildAll-MigraDoc.sdf
-MigraDoc/code/MigraDoc.Rendering/MigraDoc.Rendering.Resources/MigraDoc.Rendering.Resources.vcxproj.user
-MigraDoc/code/MigraDoc.RtfRendering/MigraDoc.RtfRendering.resources/MigraDoc.RtfRendering.Resources.vcxproj.user
+/MigraDoc/code/BuildAll-MigraDoc.sdf
+/MigraDoc/code/MigraDoc.Rendering/MigraDoc.Rendering.Resources/MigraDoc.Rendering.Resources.vcxproj.user
+/MigraDoc/code/MigraDoc.RtfRendering/MigraDoc.RtfRendering.resources/MigraDoc.RtfRendering.Resources.vcxproj.user
+/PDFsharp/code/ExtractFontData/FontHacks
