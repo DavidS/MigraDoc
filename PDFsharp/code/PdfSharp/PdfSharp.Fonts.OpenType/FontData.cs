@@ -28,6 +28,7 @@
 #endregion
 
 #define VERBOSE_
+// #define SAVEFONT
 
 using System;
 using System.Diagnostics;
@@ -47,6 +48,28 @@ using UFWord = System.UInt16;
 
 namespace PdfSharp.Fonts.OpenType
 {
+  class FileExtensions
+  {
+    public static void WriteFileBytes(byte[] bytes, string filename)
+    {
+      if (!Directory.Exists(Path.GetDirectoryName(filename)))
+          Directory.CreateDirectory(Path.GetDirectoryName(filename));
+      using (var fs = System.IO.File.OpenWrite(filename))
+      {
+        new BinaryWriter(fs).Write(bytes);
+      }
+    }
+  }
+  /// <summary>
+  /// public configuration surface for the FontData loader
+  /// </summary>
+  public static class FontDataConfig
+  {
+    /// <summary>
+    /// Set this to an assembly containing fontdat resources, if you cannot rely on the GetFontData native method. e.g. under Mono
+    /// </summary>
+    public static System.Reflection.Assembly ResourceAssembly { get; set; } 
+  }
   /// <summary>
   /// Represents an Open Type Font font in memory.
   /// </summary>
@@ -128,6 +151,22 @@ namespace PdfSharp.Fonts.OpenType
       //}
       if (this.data == null)
       {
+        var name = string.Format("PdfSharp.FontHacks.{0}{1}{2}.fontdat",
+            font.Name,
+            font.Bold ? ".Bold" : string.Empty,
+            font.Italic ? ".Italic" : string.Empty);
+        if (FontDataConfig.ResourceAssembly != null && new List<string>(FontDataConfig.ResourceAssembly.GetManifestResourceNames()).Contains(name))
+        {
+          System.Diagnostics.Debug.WriteLine("*** Reading fontdata from Resource");
+          using (var s = FontDataConfig.ResourceAssembly.GetManifestResourceStream(name))
+          {
+            this.data = new byte[s.Length];
+            s.Read(this.data, 0, (int)s.Length);
+          }
+        }
+        else
+        {
+          System.Diagnostics.Debug.WriteLine("*** Reading fontdata from GDI+");
         int error;
         IntPtr hfont = gdiFont.ToHfont();
         IntPtr hdc = NativeMethods.GetDC(IntPtr.Zero);
@@ -142,6 +181,12 @@ namespace PdfSharp.Fonts.OpenType
           this.data = new byte[size];
           int effectiveSize = NativeMethods.GetFontData(hdc, 0, 0, this.data, this.data.Length);
           Debug.Assert(size == effectiveSize);
+#if SAVEFONT
+            FileExtensions.WriteFileBytes(this.data, string.Format("..\\..\\FontHacks\\{0}{1}{2}.fontdat",
+                  font.Name,
+                  font.Bold ? ".Bold" : string.Empty,
+                  font.Italic ? ".Italic" : string.Empty));
+#endif
           NativeMethods.SelectObject(hdc, oldFont);
           NativeMethods.ReleaseDC(IntPtr.Zero, hdc);
           error.GetType();
@@ -188,6 +233,7 @@ namespace PdfSharp.Fonts.OpenType
       }
       if (this.data == null)
         throw new InvalidOperationException("Internal error. Font data could not retrieved.");
+    }
     }
 #endif
 
