@@ -28,7 +28,6 @@
 #endregion
 
 #define VERBOSE_
-// #define SAVEFONT
 
 using System;
 using System.Diagnostics;
@@ -65,10 +64,20 @@ namespace PdfSharp.Fonts.OpenType
   /// </summary>
   public static class FontDataConfig
   {
+    static FontDataConfig()
+    {
+      SaveFont = false;
+    }
+
     /// <summary>
     /// Set this to an assembly containing fontdat resources, if you cannot rely on the GetFontData native method. e.g. under Mono
     /// </summary>
-    public static System.Reflection.Assembly ResourceAssembly { get; set; } 
+    public static System.Reflection.Assembly ResourceAssembly { get; set; }
+
+    /// <summary>
+    /// Set this to true to create .fontdat files for all requested fonts.
+    /// </summary>
+    public static bool SaveFont { get; set; }
   }
   /// <summary>
   /// Represents an Open Type Font font in memory.
@@ -167,73 +176,74 @@ namespace PdfSharp.Fonts.OpenType
         else
         {
           System.Diagnostics.Debug.WriteLine("*** Reading fontdata from GDI+");
-        int error;
-        IntPtr hfont = gdiFont.ToHfont();
-        IntPtr hdc = NativeMethods.GetDC(IntPtr.Zero);
-        error = Marshal.GetLastWin32Error();
-        IntPtr oldFont = NativeMethods.SelectObject(hdc, hfont);
-        error = Marshal.GetLastWin32Error();
-        // size is exactly the size of the font file.
-        int size = NativeMethods.GetFontData(hdc, 0, 0, null, 0);
-        error = Marshal.GetLastWin32Error();
-        if (size > 0)
-        {
-          this.data = new byte[size];
-          int effectiveSize = NativeMethods.GetFontData(hdc, 0, 0, this.data, this.data.Length);
-          Debug.Assert(size == effectiveSize);
-#if SAVEFONT
-            FileExtensions.WriteFileBytes(this.data, string.Format("..\\..\\FontHacks\\{0}{1}{2}.fontdat",
-                  font.Name,
-                  font.Bold ? ".Bold" : string.Empty,
-                  font.Italic ? ".Italic" : string.Empty));
-#endif
-          NativeMethods.SelectObject(hdc, oldFont);
-          NativeMethods.ReleaseDC(IntPtr.Zero, hdc);
-          error.GetType();
-        }
-        else
-        {
-          // Sometimes size is -1 (GDI_ERROR), but I cannot determine why. It happens only with the font 'Symbol'.
-          // The issue occurs the first time in early 2005, when I start writing PDFsharp. I could not fix it and after
-          // some code refactoring the problem disappears.
-          // There was never a report from anyone about this issue.
-          // Now I get it again (while debugging QBX 2006). Maybe it is a problem with my PC at my home office.
-          // As a work-around I create a new font handle with a different height value. This works. Maybe the
-          // font file gets locked somewhere. Very very strange.
-
-          // IF SOMEONE ELSE COMES HERE PLEASE LET ME KNOW!
-
-          // Clean up old handles
-          NativeMethods.SelectObject(hdc, oldFont);
-          NativeMethods.ReleaseDC(IntPtr.Zero, hdc);
-
-          // Try again with new font handle
-          logFont = new NativeMethods.LOGFONT();
-          gdiFont.ToLogFont(logFont);
-          logFont.lfHeight += 1; // force new handle
-          IntPtr hfont2 = NativeMethods.CreateFontIndirect(logFont);
-          hdc = NativeMethods.GetDC(IntPtr.Zero);
+          int error;
+          IntPtr hfont = gdiFont.ToHfont();
+          IntPtr hdc = NativeMethods.GetDC(IntPtr.Zero);
           error = Marshal.GetLastWin32Error();
-          oldFont = NativeMethods.SelectObject(hdc, hfont2);
+          IntPtr oldFont = NativeMethods.SelectObject(hdc, hfont);
           error = Marshal.GetLastWin32Error();
           // size is exactly the size of the font file.
-          size = NativeMethods.GetFontData(hdc, 0, 0, null, 0);
+          int size = NativeMethods.GetFontData(hdc, 0, 0, null, 0);
           error = Marshal.GetLastWin32Error();
           if (size > 0)
           {
             this.data = new byte[size];
             int effectiveSize = NativeMethods.GetFontData(hdc, 0, 0, this.data, this.data.Length);
             Debug.Assert(size == effectiveSize);
+            if (FontDataConfig.SaveFont)
+            {
+              FileExtensions.WriteFileBytes(this.data, string.Format("..\\..\\FontHacks\\{0}{1}{2}.fontdat",
+                  font.Name,
+                  font.Bold ? ".Bold" : string.Empty,
+                  font.Italic ? ".Italic" : string.Empty));
+            }
+            NativeMethods.SelectObject(hdc, oldFont);
+            NativeMethods.ReleaseDC(IntPtr.Zero, hdc);
+            error.GetType();
           }
-          NativeMethods.SelectObject(hdc, oldFont);
-          NativeMethods.ReleaseDC(IntPtr.Zero, hdc);
-          NativeMethods.DeleteObject(hfont2);
-          error.GetType();
+          else
+          {
+            // Sometimes size is -1 (GDI_ERROR), but I cannot determine why. It happens only with the font 'Symbol'.
+            // The issue occurs the first time in early 2005, when I start writing PDFsharp. I could not fix it and after
+            // some code refactoring the problem disappears.
+            // There was never a report from anyone about this issue.
+            // Now I get it again (while debugging QBX 2006). Maybe it is a problem with my PC at my home office.
+            // As a work-around I create a new font handle with a different height value. This works. Maybe the
+            // font file gets locked somewhere. Very very strange.
+
+            // IF SOMEONE ELSE COMES HERE PLEASE LET ME KNOW!
+
+            // Clean up old handles
+            NativeMethods.SelectObject(hdc, oldFont);
+            NativeMethods.ReleaseDC(IntPtr.Zero, hdc);
+
+            // Try again with new font handle
+            logFont = new NativeMethods.LOGFONT();
+            gdiFont.ToLogFont(logFont);
+            logFont.lfHeight += 1; // force new handle
+            IntPtr hfont2 = NativeMethods.CreateFontIndirect(logFont);
+            hdc = NativeMethods.GetDC(IntPtr.Zero);
+            error = Marshal.GetLastWin32Error();
+            oldFont = NativeMethods.SelectObject(hdc, hfont2);
+            error = Marshal.GetLastWin32Error();
+            // size is exactly the size of the font file.
+            size = NativeMethods.GetFontData(hdc, 0, 0, null, 0);
+            error = Marshal.GetLastWin32Error();
+            if (size > 0)
+            {
+              this.data = new byte[size];
+              int effectiveSize = NativeMethods.GetFontData(hdc, 0, 0, this.data, this.data.Length);
+              Debug.Assert(size == effectiveSize);
+            }
+            NativeMethods.SelectObject(hdc, oldFont);
+            NativeMethods.ReleaseDC(IntPtr.Zero, hdc);
+            NativeMethods.DeleteObject(hfont2);
+            error.GetType();
+          }
         }
+        if (this.data == null)
+          throw new InvalidOperationException("Internal error. Font data could not retrieved.");
       }
-      if (this.data == null)
-        throw new InvalidOperationException("Internal error. Font data could not retrieved.");
-    }
     }
 #endif
 
