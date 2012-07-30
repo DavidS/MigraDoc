@@ -420,7 +420,7 @@ namespace PdfSharp.Drawing
     {
       XGraphics gfx = null;
 #if GDI
-      gfx = new XGraphics((System.Drawing.Graphics)null, size, pageUnit, pageDirection);
+      gfx = new XGraphics(Graphics.FromImage(new Bitmap(1, 1)), size, pageUnit, pageDirection);
 #endif
 #if WPF && !SILVERLIGHT
       gfx = new XGraphics((System.Windows.Media.DrawingContext)null, size, pageUnit, pageDirection);
