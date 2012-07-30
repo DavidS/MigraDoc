@@ -381,7 +381,7 @@ namespace PdfSharp.Fonts.OpenType
 ////      IntPtr hfont2 = font.ToHfont();
 ////      System.Windows.Forms.MessageBox.Show(hfont2.ToString());
 //
-//      Graphics gfx = Graphics.FromHwnd(IntPtr.Zero);
+//      Graphics gfx = Graphics.FromImage(new Bitmap(100, 100));
 //      IntPtr hdc = gfx.GetHdc();
 //      IntPtr oldFont =  SelectObject(hdc, hfont);
 //      int size = GetFontData(hdc, 0, 0, null, 0);

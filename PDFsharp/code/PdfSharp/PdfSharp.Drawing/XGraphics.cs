@@ -67,7 +67,7 @@ namespace PdfSharp.Drawing
       if (gfx == null)
       {
         //throw new ArgumentNullException("gfx");
-        gfx = Graphics.FromHwnd(IntPtr.Zero);
+        gfx = Graphics.FromImage(new Bitmap(100, 100));
       }
 
       this.gsStack = new GraphicsStateStack(this);
@@ -250,11 +250,8 @@ namespace PdfSharp.Drawing
       page.RenderContent = content;
 
 #if GDI
-      // HACK: This does not work with MediumTrust
-      this.gfx = Graphics.FromHwnd(IntPtr.Zero);
+      this.gfx = Graphics.FromImage(new Bitmap(100, 100));
       this.targetContext = XGraphicTargetContext.GDI;
-      //Bitmap bm = new Bitmap(10, 10);
-      //this.gfx = Graphics.FromImage(bm);
 #endif
 #if WPF && !SILVERLIGHT
       this.dv = new DrawingVisual();
@@ -319,7 +316,7 @@ namespace PdfSharp.Drawing
       if (form.Owner == null)
       {
         MemoryStream stream = new MemoryStream();
-        Graphics refgfx = Graphics.FromHwnd(IntPtr.Zero);
+        Graphics refgfx = Graphics.FromImage(new Bitmap(100, 100));
         IntPtr hdc = refgfx.GetHdc();
 
 #if true_
@@ -379,7 +376,7 @@ namespace PdfSharp.Drawing
       else
       {
         this.metafile = null;
-        this.gfx = Graphics.FromHwnd(IntPtr.Zero);
+        this.gfx = Graphics.FromImage(new Bitmap(100, 100));
       }
       if (form.Owner != null)
         this.renderer = new PdfSharp.Drawing.Pdf.XGraphicsPdfRenderer(form, this);
@@ -420,7 +417,7 @@ namespace PdfSharp.Drawing
     {
       XGraphics gfx = null;
 #if GDI
-      gfx = new XGraphics(Graphics.FromImage(new Bitmap(1, 1)), size, pageUnit, pageDirection);
+      gfx = new XGraphics(Graphics.FromImage(new Bitmap(100, 100)), size, pageUnit, pageDirection);
 #endif
 #if WPF && !SILVERLIGHT
       gfx = new XGraphics((System.Windows.Media.DrawingContext)null, size, pageUnit, pageDirection);

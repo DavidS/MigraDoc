@@ -495,7 +495,7 @@ namespace PdfSharp.Forms
     internal void CalculatePreviewDimension(out bool zoomChanged)
     {
       // User may change display resolution while preview is running
-      Graphics gfx = Graphics.FromHwnd(IntPtr.Zero);
+      Graphics gfx = Graphics.FromImage(new Bitmap(100, 100));
       IntPtr hdc = gfx.GetHdc();
       DeviceInfos devInfo = DeviceInfos.GetInfos(hdc);
       gfx.ReleaseHdc(hdc);
