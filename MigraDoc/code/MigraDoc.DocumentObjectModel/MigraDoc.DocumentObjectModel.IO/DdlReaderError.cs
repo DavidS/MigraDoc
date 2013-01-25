@@ -41,6 +41,7 @@ namespace MigraDoc.DocumentObjectModel.IO
   /// <summary>
   /// Represents an error or diagnostic message reported by the DDL reader.
   /// </summary>
+  [System.CLSCompliant(true)]
   public class DdlReaderError
   {
     /// <summary>

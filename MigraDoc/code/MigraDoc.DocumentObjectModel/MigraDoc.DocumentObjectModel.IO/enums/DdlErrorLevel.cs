@@ -37,6 +37,7 @@ namespace MigraDoc.DocumentObjectModel.IO
   /// <summary>
   /// Specifies the severity of a DDL reader diagnostic.
   /// </summary>
+  [System.CLSCompliant(true)]
   public enum DdlErrorLevel
   {
     /// <summary>

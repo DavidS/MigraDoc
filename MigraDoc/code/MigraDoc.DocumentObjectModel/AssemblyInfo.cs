@@ -47,3 +47,4 @@ using MigraDoc.DocumentObjectModel;
 [assembly: AssemblyDelaySign(false)]
 [assembly: AssemblyKeyName("")]
 
+[assembly: System.CLSCompliant(false)]
