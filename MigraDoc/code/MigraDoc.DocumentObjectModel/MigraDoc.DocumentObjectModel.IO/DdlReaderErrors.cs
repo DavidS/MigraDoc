@@ -41,6 +41,7 @@ namespace MigraDoc.DocumentObjectModel.IO
   /// <summary>
   /// Used to collect errors reported by the DDL parser.
   /// </summary>
+  [System.CLSCompliant(true)]
   public class DdlReaderErrors : IEnumerable
   {
     /// <summary>
