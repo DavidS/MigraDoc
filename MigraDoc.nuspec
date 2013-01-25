@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>PDFsharp-MigraDoc-GDI-dasz</id>
-    <version>1.32.3884.0</version>
+    <version>1.32.3885.0</version>
     <authors>empira Software GmbH</authors>
     <licenseUrl>http://www.pdfsharp.net/MigraDoc_License.ashx</licenseUrl>
     <projectUrl>https://github.com/DavidS/MigraDoc</projectUrl>
@@ -11,12 +11,8 @@
 	<summary>The popular PDF library with a few fixes.</summary>
     <description>This version is modified to fix a few bugs by dasz.at. Original description: MigraDoc Foundation - the Open Source .NET library that easily creates documents based on an object model with paragraphs, tables, styles, etc. and renders them into PDF or RTF. This is PDFsharp and MigraDoc based on GDI+.</description>
     <releaseNotes>
-	* Fix initialisation error around "RegionInfo.CurrentInfo" being null.
-	* Implement ListType.None
-	* Implement loading of FontData from extracted resources
-	* Implement small utility to create extracted font metrics
-	* Do not use default HWnd since that doesn't work on head-less systems
-	</releaseNotes>
+      * Mark DdlReaderErrors as CLSCompliant
+</releaseNotes>
     <copyright>Copyright 2012</copyright>
     <tags>PDFsharp MigraDoc PDF RTF document creation</tags>
   </metadata>
